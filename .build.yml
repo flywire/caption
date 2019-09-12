@@ -1,0 +1,34 @@
+image: ubuntu/bionic
+
+packages:
+    - python
+    - python-pip
+
+secrets:
+    - d622464e-897f-41d3-ba3e-d646c2fea762
+
+sources:
+    - https://git.sr.ht/~ferruck/yafg
+
+tasks:
+    - setup: |
+        pip install setuptools wheel twine
+
+    - tests: |
+        cd yafg
+        # Use the setup.py to install the dependencies just as the user
+        # would do it.
+        pip install -e .
+        python -m unittest discover
+
+    - deploy: |
+        cd yafg
+        if [ "$(git tag --points-at HEAD)" == "$(grep version setup.py | sed 's/.*\"\(.*\)\",/v\1/')" ]; then
+            python setup.py sdist bdist_wheel
+            python -m twine upload --config-file ~/.pypirc dist/*
+        fi
+
+triggers:
+    - action: email
+      condition: failure
+      to: "Philipp Trommler <yafg@philipp-trommler.me>"
