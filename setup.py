@@ -44,5 +44,5 @@ setuptools.setup(
         packages = setuptools.find_packages(),
         python_requires = ">=2.7.15, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4",
         url = "https://git.sr.ht/~ferruck/yafg",
-        version = "0.1",
+        version = "0.2",
 )

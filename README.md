@@ -70,6 +70,14 @@ Currently supported options are listed below:
     usage is discouraged anyways (see below), this may be an option worth
     considering.
 
+* `figureClass` (default: `""`):
+
+    The CSS class to add to the generated `<figure />` element.
+
+* `figcaptionClass` (default: `""`):
+
+    The CSS class to add to the generated `<figcaption />` element.
+
 ## Why?
 
 yafg arose from the dissatisfaction with the existing solutions, namely:

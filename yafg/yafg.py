@@ -8,9 +8,11 @@ from markdown.treeprocessors import Treeprocessor
 from xml.etree import ElementTree
 
 class YafgTreeprocessor(Treeprocessor):
-    def __init__(self, md, stripTitle):
+    def __init__(self, md, stripTitle, figureClass, figcaptionClass):
         self.md = md
         self.stripTitle = stripTitle
+        self.figureClass = figureClass
+        self.figcaptionClass = figcaptionClass
 
     def run(self, root):
         for par in root.findall("./p[img]"):
@@ -22,6 +24,8 @@ class YafgTreeprocessor(Treeprocessor):
             par.tag = "figure"
             for k, v in attrib.items():
                 par.set(k, v)
+            if self.figureClass is not "":
+                par.set("class", self.figureClass)
             par.text = "\n"
 
             img.tail = "\n"
@@ -30,17 +34,28 @@ class YafgTreeprocessor(Treeprocessor):
             par.append(img)
 
             figcaption = ElementTree.SubElement(par, "figcaption")
+            if self.figcaptionClass is not "":
+                figcaption.set("class", self.figcaptionClass)
             figcaption.text = title
             figcaption.tail = "\n"
 
 class YafgExtension(Extension):
     def __init__(self, **kwargs):
-        self.config = {"stripTitle" : [False, "Strip the title from the <img />."]}
+        self.config = {
+                "stripTitle" : [False, "Strip the title from the <img />."],
+                "figureClass" : ["", "CSS class to add to the <figure /> element."],
+                "figcaptionClass" : ["", "CSS class to add to the <figcaption /> element."],
+        }
         super(YafgExtension, self).__init__(**kwargs)
 
     def extendMarkdown(self, md):
         md.treeprocessors.register(
-                YafgTreeprocessor(md, stripTitle = self.getConfig("stripTitle")),
+                YafgTreeprocessor(
+                    md,
+                    stripTitle=self.getConfig("stripTitle"),
+                    figureClass=self.getConfig("figureClass"),
+                    figcaptionClass=self.getConfig("figcaptionClass"),
+                ),
                 "yafgtreeprocessor",
                 15)
 
