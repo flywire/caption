@@ -16,9 +16,7 @@ tasks:
 
     - tests: |
         cd yafg
-        # Use the setup.py to install the dependencies just as the user
-        # would do it.
-        pip install -e .
+        pip install -r requirements.txt
         python -m unittest discover
 
     - deploy: |

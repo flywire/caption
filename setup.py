@@ -8,6 +8,9 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt", "r") as fh:
+    requirements = fh.read().splitlines()
+
 setuptools.setup(
         author = "Philipp Trommler",
         author_email = "yafg@philipp-trommler.me",
@@ -25,10 +28,7 @@ setuptools.setup(
         entry_points = {
             "markdown.extensions": ["yafg = yafg:YafgExtension"]
         },
-        install_requires = [
-            "Markdown>=3.1.1",
-            "setuptools>=36",
-        ],
+        install_requires = requirements,
         keywords = "markdown image figure caption html a11y",
         license = "GPLv3+",
         long_description = long_description,
