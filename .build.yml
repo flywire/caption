@@ -3,6 +3,8 @@ image: ubuntu/bionic
 packages:
     - python
     - python-pip
+    - python3
+    - python3-pip
 
 secrets:
     - d622464e-897f-41d3-ba3e-d646c2fea762
@@ -12,18 +14,34 @@ sources:
 
 tasks:
     - setup: |
-        pip install setuptools wheel twine
+        pip3 install setuptools wheel twine virtualenv
 
     - tests: |
+        # Access the virtualenv binary
+        export PATH=$PATH:~/.local/bin
+
+        # Begin tests
         cd yafg
+
+        virtualenv -p python2 venv
+        . venv/bin/activate
         pip install -r requirements.txt
         python -m unittest discover
+        deactivate
+        rm -rf venv
+
+        virtualenv -p python3 venv
+        . venv/bin/activate
+        pip install -r requirements.txt
+        python -m unittest discover
+        deactivate
+        rm -rf venv
 
     - deploy: |
         cd yafg
         if [ "$(git tag --points-at HEAD)" == "$(grep version setup.py | sed 's/.*\"\(.*\)\",/v\1/')" ]; then
-            python setup.py sdist bdist_wheel
-            python -m twine upload --config-file ~/.pypirc dist/*
+            python3 setup.py sdist bdist_wheel --universal
+            python3 -m twine upload --config-file ~/.pypirc dist/*
         fi
 
 triggers:

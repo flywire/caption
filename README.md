@@ -1,8 +1,10 @@
 # yafg - Yet Another Figure Generator
 
-*yafg* is yet another figure generator plugin for Python's Markdown and its HTML
-output path. It's currently written and only tested with Python 2.7 and Markdown
-3.1, but aims at supporting as many versions as possible.
+*yafg* is yet another figure generator plugin for Python's Markdown. It's
+written and tested with Python 2.7 and Python 3.6 as well as Markdown 3.1.1, but
+aims at supporting as many versions as possible. If you encounter any problems
+with the given versions or find yourself using *yafg* without problems with any
+others, please give me a hint using the e-mail address listed below.
 
 It uses the `title` attribute given to an image within Markdown to generate a
 `<figure>` environment with a `<figcaption>` containing the `title`'s text,
