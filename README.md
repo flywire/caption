@@ -78,6 +78,11 @@ Currently supported options are listed below:
 
     The CSS class to add to the generated `<figcaption />` element.
 
+* `figureNumbering` (default: `False`):
+
+    Adds a figure number like "Figure 1:" in front of the caption. It's wrapped
+    in a `<span />` for easier styling.
+
 ## Why?
 
 yafg arose from the dissatisfaction with the existing solutions, namely:

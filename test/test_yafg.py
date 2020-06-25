@@ -110,13 +110,30 @@ as sources.</figcaption>
         outString = markdown.markdown(inString, extensions = [yafg.YafgExtension(figcaptionClass="testclass")])
         self.assertEqual(expectedString, outString)
 
+    def test_figure_numbering(self):
+        inString = """\
+![alt text](/path/to/image.png "Title")
+
+![alt text 2](/path/to/image2.png "Title 2")"""
+        expectedString = """\
+<figure>
+<img alt="alt text" src="/path/to/image.png" title="Title" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>
+<figure>
+<img alt="alt text 2" src="/path/to/image2.png" title="Title 2" />
+<figcaption><span>Figure&nbsp;2:</span> Title 2</figcaption>
+</figure>"""
+        outString = markdown.markdown(inString, extensions = [yafg.YafgExtension(figureNumbering=True)])
+        self.assertEqual(expectedString, outString)
+
     def test_combined_options(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
 <figure class="testclass1">
 <img alt="alt text" src="/path/to/image.png" />
-<figcaption class="testclass2">Title</figcaption>
+<figcaption class="testclass2"><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [yafg.YafgExtension(stripTitle=True, figureClass="testclass1", figcaptionClass="testclass2")])
+        outString = markdown.markdown(inString, extensions = [yafg.YafgExtension(stripTitle=True, figureClass="testclass1", figcaptionClass="testclass2", figureNumbering=True)])
         self.assertEqual(expectedString, outString)
