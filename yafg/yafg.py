@@ -8,13 +8,21 @@ from markdown.treeprocessors import Treeprocessor
 from xml.etree import ElementTree
 
 class YafgTreeprocessor(Treeprocessor):
-    def __init__(self, md, stripTitle, figureClass, figcaptionClass, figureNumbering):
+    def __init__(
+            self,
+            md,
+            stripTitle,
+            figureClass,
+            figcaptionClass,
+            figureNumbering,
+            figureNumberClass):
         self.md = md
         self.stripTitle = stripTitle
         self.figureClass = figureClass
         self.figcaptionClass = figcaptionClass
         self.figureNumbering = figureNumbering
         self.figureNumber = 0
+        self.figureNumberClass = figureNumberClass
 
     def run(self, root):
         for par in root.findall("./p[img]"):
@@ -45,6 +53,8 @@ class YafgTreeprocessor(Treeprocessor):
                 figureNumberSpan = ElementTree.SubElement(figcaption, "span")
                 figureNumberSpan.text = "Figure&nbsp;{}:".format(self.figureNumber)
                 figureNumberSpan.tail = " {}".format(title)
+                if self.figureNumberClass is not "":
+                    figureNumberSpan.set("class", self.figureNumberClass)
             else:
                 figcaption.text = title
 
@@ -57,6 +67,7 @@ class YafgExtension(Extension):
                 "figureClass" : ["", "CSS class to add to the <figure /> element."],
                 "figcaptionClass" : ["", "CSS class to add to the <figcaption /> element."],
                 "figureNumbering" : [False, "Show the figure number in front of the image caption."],
+                "figureNumberClass" : ["", "CSS class to add to the figure number <span /> element."],
         }
         super(YafgExtension, self).__init__(**kwargs)
 
@@ -68,6 +79,7 @@ class YafgExtension(Extension):
                     figureClass=self.getConfig("figureClass"),
                     figcaptionClass=self.getConfig("figcaptionClass"),
                     figureNumbering=self.getConfig("figureNumbering"),
+                    figureNumberClass=self.getConfig("figureNumberClass"),
                 ),
                 "yafgtreeprocessor",
                 15)

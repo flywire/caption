@@ -83,6 +83,11 @@ Currently supported options are listed below:
     Adds a figure number like "Figure 1:" in front of the caption. It's wrapped
     in a `<span />` for easier styling.
 
+* `figureNumberClass` (default: `""`):
+
+    The CSS class to add to the `<span />` element generated for the figure
+    number.
+
 ## Why?
 
 yafg arose from the dissatisfaction with the existing solutions, namely:
