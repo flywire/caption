@@ -88,6 +88,12 @@ Currently supported options are listed below:
     The CSS class to add to the `<span />` element generated for the figure
     number.
 
+* `figureNumberText` (default: `"Figure"`):
+
+    The text to show in front of the figure number. A final non-breaking space
+    is inserted between the content of `figureNumberText` and the actual figure
+    number.
+
 ## Why?
 
 yafg arose from the dissatisfaction with the existing solutions, namely:

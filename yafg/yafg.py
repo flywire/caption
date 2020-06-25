@@ -15,7 +15,8 @@ class YafgTreeprocessor(Treeprocessor):
             figureClass,
             figcaptionClass,
             figureNumbering,
-            figureNumberClass):
+            figureNumberClass,
+            figureNumberText):
         self.md = md
         self.stripTitle = stripTitle
         self.figureClass = figureClass
@@ -23,6 +24,7 @@ class YafgTreeprocessor(Treeprocessor):
         self.figureNumbering = figureNumbering
         self.figureNumber = 0
         self.figureNumberClass = figureNumberClass
+        self.figureNumberText = figureNumberText
 
     def run(self, root):
         for par in root.findall("./p[img]"):
@@ -51,7 +53,7 @@ class YafgTreeprocessor(Treeprocessor):
 
             if self.figureNumbering:
                 figureNumberSpan = ElementTree.SubElement(figcaption, "span")
-                figureNumberSpan.text = "Figure&nbsp;{}:".format(self.figureNumber)
+                figureNumberSpan.text = "{}&nbsp;{}:".format(self.figureNumberText, self.figureNumber)
                 figureNumberSpan.tail = " {}".format(title)
                 if self.figureNumberClass is not "":
                     figureNumberSpan.set("class", self.figureNumberClass)
@@ -68,6 +70,7 @@ class YafgExtension(Extension):
                 "figcaptionClass" : ["", "CSS class to add to the <figcaption /> element."],
                 "figureNumbering" : [False, "Show the figure number in front of the image caption."],
                 "figureNumberClass" : ["", "CSS class to add to the figure number <span /> element."],
+                "figureNumberText" : ["Figure", "The text to show in front of the figure number."],
         }
         super(YafgExtension, self).__init__(**kwargs)
 
@@ -80,6 +83,7 @@ class YafgExtension(Extension):
                     figcaptionClass=self.getConfig("figcaptionClass"),
                     figureNumbering=self.getConfig("figureNumbering"),
                     figureNumberClass=self.getConfig("figureNumberClass"),
+                    figureNumberText=self.getConfig("figureNumberText"),
                 ),
                 "yafgtreeprocessor",
                 15)
