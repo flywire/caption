@@ -12,23 +12,23 @@ class YafgTreeprocessor(Treeprocessor):
             self,
             md,
             stripTitle,
-            figureClass,
-            figcaptionClass,
-            figureNumbering,
-            figureNumberClass,
-            figureNumberText):
+            captionClass,
+            capcaptionClass,
+            captionNumbering,
+            captionNumberClass,
+            captionPrefixText):
         self.md = md
         self.stripTitle = stripTitle
-        self.figureClass = figureClass
-        self.figcaptionClass = figcaptionClass
-        self.figureNumbering = figureNumbering
-        self.figureNumber = 0
-        self.figureNumberClass = figureNumberClass
-        self.figureNumberText = figureNumberText
+        self.captionClass = captionClass
+        self.capcaptionClass = capcaptionClass
+        self.captionNumbering = captionNumbering
+        self.captionNumber = 0
+        self.captionNumberClass = captionNumberClass
+        self.captionPrefixText = captionPrefixText
 
     def run(self, root):
         for par in root.findall("./p[img]"):
-            self.figureNumber += 1
+            self.captionNumber += 1
 
             attrib = par.attrib
             img = par.find("img")
@@ -36,41 +36,47 @@ class YafgTreeprocessor(Treeprocessor):
 
             par.clear()
             par.tag = "figure"
+
+            # Allow caption before or after
+
+            # Object starts here
             for k, v in attrib.items():
                 par.set(k, v)
-            if self.figureClass is not "":
-                par.set("class", self.figureClass)
+            if self.captionClass is not "":
+                par.set("class", self.captionClass)
             par.text = "\n"
 
             img.tail = "\n"
+            # Images only
             if self.stripTitle:
                 del img.attrib["title"]
             par.append(img)
 
-            figcaption = ElementTree.SubElement(par, "figcaption")
-            if self.figcaptionClass is not "":
-                figcaption.set("class", self.figcaptionClass)
+            # Caption starts here
+            capcaption = ElementTree.SubElement(par, "capcaption")
+            if self.capcaptionClass is not "":
+                capcaption.set("class", self.capcaptionClass)
 
-            if self.figureNumbering:
-                figureNumberSpan = ElementTree.SubElement(figcaption, "span")
-                figureNumberSpan.text = "{}&nbsp;{}:".format(self.figureNumberText, self.figureNumber)
-                figureNumberSpan.tail = " {}".format(title)
-                if self.figureNumberClass is not "":
-                    figureNumberSpan.set("class", self.figureNumberClass)
+            if self.captionNumbering:
+                captionNumberSpan = ElementTree.SubElement(capcaption, "span")
+                captionNumberSpan.text = "{}&nbsp;{}:".format(self.captionPrefixText, self.captionNumber)
+                captionNumberSpan.tail = " {}".format(title)
+                if self.captionNumberClass is not "":
+                    captionNumberSpan.set("class", self.captionNumberClass)
             else:
-                figcaption.text = title
+                capcaption.text = title
 
-            figcaption.tail = "\n"
+            capcaption.tail = "\n"
 
 class YafgExtension(Extension):
     def __init__(self, **kwargs):
         self.config = {
                 "stripTitle" : [False, "Strip the title from the <img />."],
-                "figureClass" : ["", "CSS class to add to the <figure /> element."],
-                "figcaptionClass" : ["", "CSS class to add to the <figcaption /> element."],
-                "figureNumbering" : [False, "Show the figure number in front of the image caption."],
-                "figureNumberClass" : ["", "CSS class to add to the figure number <span /> element."],
-                "figureNumberText" : ["Figure", "The text to show in front of the figure number."],
+                "captionClass" : ["", "CSS class to add to the <caption /> element."],
+                "capcaptionClass" : ["", "CSS class to add to the <capcaption /> element."],
+                "captionNumbering" : [False, "Show the caption number in front of the image caption."],
+                "captionNumberClass" : ["", "CSS class to add to the caption number <span /> element."],
+                "captionPrefixText" : ["Figure", "The text to show at the front of the caption."],
         }
         super(YafgExtension, self).__init__(**kwargs)
 
@@ -79,11 +85,11 @@ class YafgExtension(Extension):
                 YafgTreeprocessor(
                     md,
                     stripTitle=self.getConfig("stripTitle"),
-                    figureClass=self.getConfig("figureClass"),
-                    figcaptionClass=self.getConfig("figcaptionClass"),
-                    figureNumbering=self.getConfig("figureNumbering"),
-                    figureNumberClass=self.getConfig("figureNumberClass"),
-                    figureNumberText=self.getConfig("figureNumberText"),
+                    captionClass=self.getConfig("captionClass"),
+                    capcaptionClass=self.getConfig("capcaptionClass"),
+                    captionNumbering=self.getConfig("captionNumbering"),
+                    captionNumberClass=self.getConfig("captionNumberClass"),
+                    captionPrefixText=self.getConfig("captionPrefixText"),
                 ),
                 "yafgtreeprocessor",
                 15)

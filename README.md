@@ -70,28 +70,28 @@ Currently supported options are listed below:
     usage is discouraged anyways (see below), this may be an option worth
     considering.
 
-* `figureClass` (default: `""`):
+* `captionClass` (default: `""`):
 
-    The CSS class to add to the generated `<figure />` element.
+    The CSS class to add to the generated `<caption />` element.
 
-* `figcaptionClass` (default: `""`):
+* `capcaptionClass` (default: `""`):
 
-    The CSS class to add to the generated `<figcaption />` element.
+    The CSS class to add to the generated `<capcaption />` element.
 
-* `figureNumbering` (default: `False`):
+* `captionNumbering` (default: `False`):
 
-    Adds a figure number like "Figure 1:" in front of the caption. It's wrapped
+    Adds a caption number like "Figure 1:" in front of the caption. It's wrapped
     in a `<span />` for easier styling.
 
-* `figureNumberClass` (default: `""`):
+* `captionNumberClass` (default: `""`):
 
     The CSS class to add to the `<span />` element generated for the figure
     number.
 
-* `figureNumberText` (default: `"Figure"`):
+* `captionPrefixText` (default: `"Figure"`):
 
-    The text to show in front of the figure number. A final non-breaking space
-    is inserted between the content of `figureNumberText` and the actual figure
+    The text to show at the front of the caption.. A final non-breaking space
+    is inserted between the content of `captionPrefixText` and the actual figure
     number.
 
 ## Why?
