@@ -1,5 +1,7 @@
-# yafg: Yet Another Figure Generator
+# caption - Manage markdown captions
 #
+# Copyright (c) 2020 flywire
+# forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -12,8 +14,8 @@ with open("requirements.txt", "r") as fh:
     requirements = fh.read().splitlines()
 
 setuptools.setup(
-        author = "Philipp Trommler",
-        author_email = "yafg@philipp-trommler.me",
+        author = "flywire",
+        author_email = "flywire0@gmail.com",
         classifiers = [
             "Development Status :: 4 - Beta",
             "Environment :: Plugins",
@@ -29,7 +31,7 @@ setuptools.setup(
             "Topic :: Documentation",
             "Topic :: Text Processing :: Markup",
         ],
-        description = "Figure and figcaption generator markdown extension",
+        description = "Manage markdown captions extension",
         entry_points = {
             "markdown.extensions": ["yafg = yafg:YafgExtension"]
         },
@@ -38,11 +40,11 @@ setuptools.setup(
         license = "GPLv3+",
         long_description = long_description,
         long_description_content_type = "text/markdown",
-        maintainer = "Philipp Trommler",
-        maintainer_email = "yafg@philipp-trommler.me",
-        name = "yafg",
+        maintainer = "flywire",
+        maintainer_email = "flywire0@gmail.com",
+        name = "caption",
         packages = setuptools.find_packages(),
         python_requires = ">=2.7.15, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4",
-        url = "https://git.sr.ht/~ferruck/yafg",
+        url = "https://github.com/flywire/caption",
         version = "0.2.1",
 )
