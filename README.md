@@ -1,4 +1,4 @@
-# caption - Manage markdown captions
+# caption - manages markdown captions
 
 *caption* manages captions by applying style and auto-numbering to content. The
 vision is to apply captions to any content. For now only figures are supported
@@ -7,9 +7,9 @@ but the next candidate is likely to be tables.
 *caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) - yet another
 figure generator plugin for Python's Markdown. It's written and tested with
 Python 2.7 and Python 3.6 as well as Markdown 3.1.1, but aims at supporting as
-many versions as possible. If you encounter any problems with the given versions
-or find yourself using *caption* without problems with any others, please give
-me a hint using the e-mail address listed below.
+many versions as possible. If you encounter any problems with *caption* please
+raise an [issue](https://github.com/flywire/caption/issues), or perhaps you want
+to contact me through the e-mail address on my profile to contribute.
 
 It uses the `title` attribute given to an image within Markdown to generate a
 `<figure>` environment with a `<figcaption>` containing the `title`'s text,
