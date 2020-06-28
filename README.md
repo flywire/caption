@@ -1,3 +1,9 @@
+# caption - Manage markdown captions
+
+*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply to captions for any content and the next candidate will likely be tables.
+
+It is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) so will conflict with that extension until it is refactored.
+
 # yafg - Yet Another Figure Generator
 
 *yafg* is yet another figure generator plugin for Python's Markdown. It's
@@ -128,13 +134,7 @@ Standard](https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute)).
 This makes it an ideal candidate to store the wanted `figcaption` inside of the
 standard Markdown syntax.
 
-## Author
-
-*yafg* has been written by:
-
-* Philipp Trommler <yafg@philipp-trommler.me>
-
 ## License
 
-*yafg* has been published under a GPL 3.0 or later license. See the `LICENSE`
+*caption* has been published under a GPL 3.0 or later license. See the `LICENSE`
 file for more information.
