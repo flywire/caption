@@ -7,10 +7,10 @@ packages:
     - python3-pip
 
 secrets:
-    - d622464e-897f-41d3-ba3e-d646c2fea762
+    - d622464e-897f-41d3-ba3e-99999999999
 
 sources:
-    - https://git.sr.ht/~ferruck/yafg
+    - https://github.com/flywire/caption
 
 tasks:
     - setup: |
@@ -21,7 +21,7 @@ tasks:
         export PATH=$PATH:~/.local/bin
 
         # Begin tests
-        cd yafg
+        cd caption
 
         virtualenv -p python2 venv
         . venv/bin/activate
@@ -38,7 +38,7 @@ tasks:
         rm -rf venv
 
     - deploy: |
-        cd yafg
+        cd caption
         if [ "$(git tag --points-at HEAD)" == "$(grep version setup.py | sed 's/.*\"\(.*\)\",/v\1/')" ]; then
             python3 setup.py sdist bdist_wheel --universal
             python3 -m twine upload --config-file ~/.pypirc dist/*
@@ -47,4 +47,4 @@ tasks:
 triggers:
     - action: email
       condition: failure
-      to: "Philipp Trommler <yafg@philipp-trommler.me>"
+      to: "flywire <flywire0@gmail.com>"

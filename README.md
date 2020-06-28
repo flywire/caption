@@ -1,16 +1,15 @@
 # caption - Manage markdown captions
 
-*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply captions to any content and the next candidate likely to be tables.
+*caption* manages captions by applying style and auto-numbering to content. The
+vision is to apply captions to any content. For now only figures are supported
+but the next candidate is likely to be tables.
 
-*caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) so it might conflict with that extension until it is refactored.
-
-# yafg - Yet Another Figure Generator
-
-*yafg* is yet another figure generator plugin for Python's Markdown. It's
-written and tested with Python 2.7 and Python 3.6 as well as Markdown 3.1.1, but
-aims at supporting as many versions as possible. If you encounter any problems
-with the given versions or find yourself using *yafg* without problems with any
-others, please give me a hint using the e-mail address listed below.
+*caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) - yet another
+figure generator plugin for Python's Markdown. It's written and tested with
+Python 2.7 and Python 3.6 as well as Markdown 3.1.1, but aims at supporting as
+many versions as possible. If you encounter any problems with the given versions
+or find yourself using *caption* without problems with any others, please give
+me a hint using the e-mail address listed below.
 
 It uses the `title` attribute given to an image within Markdown to generate a
 `<figure>` environment with a `<figcaption>` containing the `title`'s text,
@@ -33,22 +32,18 @@ becomes
 
 ### Install
 
-*caption* can be installed via PyPI using:
-
-```	
-pip install caption	
-```
+*caption* can be installed via `pip3 install git+https://github.com/flywire/caption`
 
 ### Standard Usage
 
 When parsing your input, you can add *caption* to Markdown as follows:
 
 ```python
-import yafg
+import caption
 
 # ...
 
-outputString = markdown.markdown(inputString, extensions = [yafg.YafgExtension(stripTitle=False)])
+outputString = markdown.markdown(inputString, extensions = [caption.captionExtension(stripTitle=False)])
 ```
 
 ### Pelican
@@ -59,7 +54,7 @@ Pelican users can add *caption* to their generator process by adding it to the
 ```python
 MARKDOWN = {
     'extensions_configs': {
-        'yafg': {
+        'caption': {
             'stripTitle': 'False',
         },
     },
@@ -70,10 +65,10 @@ MARKDOWN = {
 
 Currently supported options are listed below:
 
-* `captionPrefixText` (default: `"Figure"`):
+* `captionPrefix` (default: `"Figure"`):
 
     The text to show at the front of the caption. A final non-breaking space
-    is inserted between the content of `captionPrefixText` and the actual figure
+    is inserted between the content of `captionPrefix` and the actual figure
     number.
 
 * `capcaptionClass` (default: `""`):
@@ -82,8 +77,8 @@ Currently supported options are listed below:
 
 * `captionNumbering` (default: `False`):
 
-    Adds a caption number like "Figure 1:" in front of the caption. It's wrapped
-    in a `<span />` for easier styling.
+    Adds a caption number like "Figure 1:" in front of the caption. It's
+	wrapped in a `<span />` for easier styling.
 
 * `captionNumberClass` (default: `""`):
 
@@ -102,6 +97,7 @@ Currently supported options are listed below:
 
 ## Why?
 
+Captions are used on a range of content, not just figures. For figures, 
 yafg arose from the dissatisfaction with the existing solutions, namely:
 
 * [markdown\_captions](https://github.com/evidlo/markdown_captions) which uses

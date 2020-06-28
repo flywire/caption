@@ -1,5 +1,7 @@
-# yafg: Yet Another Figure Generator
+# caption - Manage markdown captions
 #
+# Copyright (c) 2020 flywire
+# forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -7,7 +9,7 @@ from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from xml.etree import ElementTree
 
-class YafgTreeprocessor(Treeprocessor):
+class captionTreeprocessor(Treeprocessor):
     def __init__(
             self,
             md,
@@ -53,7 +55,7 @@ class YafgTreeprocessor(Treeprocessor):
             par.append(img)
 
             # Caption starts here
-            capcaption = ElementTree.SubElement(par, "capcaption")
+            capcaption = ElementTree.SubElement(par, "figcaption")
             if self.capcaptionClass is not "":
                 capcaption.set("class", self.capcaptionClass)
 
@@ -68,7 +70,7 @@ class YafgTreeprocessor(Treeprocessor):
 
             capcaption.tail = "\n"
 
-class YafgExtension(Extension):
+class captionExtension(Extension):
     def __init__(self, **kwargs):
         self.config = {
                 "stripTitle" : [False, "Strip the title from the <img />."],
@@ -78,11 +80,11 @@ class YafgExtension(Extension):
                 "captionNumberClass" : ["", "CSS class to add to the caption number <span /> element."],
                 "captionPrefix" : ["Figure", "The text to show at the front of the caption."],
         }
-        super(YafgExtension, self).__init__(**kwargs)
+        super(captionExtension, self).__init__(**kwargs)
 
     def extendMarkdown(self, md):
         md.treeprocessors.register(
-                YafgTreeprocessor(
+                captionTreeprocessor(
                     md,
                     stripTitle=self.getConfig("stripTitle"),
                     captionClass=self.getConfig("captionClass"),
@@ -91,8 +93,8 @@ class YafgExtension(Extension):
                     captionNumberClass=self.getConfig("captionNumberClass"),
                     captionPrefix=self.getConfig("captionPrefix"),
                 ),
-                "yafgtreeprocessor",
+                "captiontreeprocessor",
                 15)
 
 def makeExtension(**kwargs):
-    return YafgExtension(**kwargs)
+    return captionExtension(**kwargs)

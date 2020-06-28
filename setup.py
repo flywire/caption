@@ -33,7 +33,7 @@ setuptools.setup(
         ],
         description = "Manage markdown captions extension",
         entry_points = {
-            "markdown.extensions": ["yafg = yafg:YafgExtension"]
+            "markdown.extensions": ["caption = caption:captionExtension"]
         },
         install_requires = requirements,
         keywords = "markdown image figure caption html a11y",
@@ -46,5 +46,5 @@ setuptools.setup(
         packages = setuptools.find_packages(),
         python_requires = ">=2.7.15, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4",
         url = "https://github.com/flywire/caption",
-        version = "0.2.2",
+        version = "0.2.3",
 )
