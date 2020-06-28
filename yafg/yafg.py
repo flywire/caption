@@ -16,7 +16,7 @@ class YafgTreeprocessor(Treeprocessor):
             capcaptionClass,
             captionNumbering,
             captionNumberClass,
-            captionPrefixText):
+            captionPrefix):
         self.md = md
         self.stripTitle = stripTitle
         self.captionClass = captionClass
@@ -24,7 +24,7 @@ class YafgTreeprocessor(Treeprocessor):
         self.captionNumbering = captionNumbering
         self.captionNumber = 0
         self.captionNumberClass = captionNumberClass
-        self.captionPrefixText = captionPrefixText
+        self.captionPrefix = captionPrefix
 
     def run(self, root):
         for par in root.findall("./p[img]"):
@@ -59,7 +59,7 @@ class YafgTreeprocessor(Treeprocessor):
 
             if self.captionNumbering:
                 captionNumberSpan = ElementTree.SubElement(capcaption, "span")
-                captionNumberSpan.text = "{}&nbsp;{}:".format(self.captionPrefixText, self.captionNumber)
+                captionNumberSpan.text = "{}&nbsp;{}:".format(self.captionPrefix, self.captionNumber)
                 captionNumberSpan.tail = " {}".format(title)
                 if self.captionNumberClass is not "":
                     captionNumberSpan.set("class", self.captionNumberClass)
@@ -76,7 +76,7 @@ class YafgExtension(Extension):
                 "capcaptionClass" : ["", "CSS class to add to the <capcaption /> element."],
                 "captionNumbering" : [False, "Show the caption number in front of the image caption."],
                 "captionNumberClass" : ["", "CSS class to add to the caption number <span /> element."],
-                "captionPrefixText" : ["Figure", "The text to show at the front of the caption."],
+                "captionPrefix" : ["Figure", "The text to show at the front of the caption."],
         }
         super(YafgExtension, self).__init__(**kwargs)
 
@@ -89,7 +89,7 @@ class YafgExtension(Extension):
                     capcaptionClass=self.getConfig("capcaptionClass"),
                     captionNumbering=self.getConfig("captionNumbering"),
                     captionNumberClass=self.getConfig("captionNumberClass"),
-                    captionPrefixText=self.getConfig("captionPrefixText"),
+                    captionPrefix=self.getConfig("captionPrefix"),
                 ),
                 "yafgtreeprocessor",
                 15)
