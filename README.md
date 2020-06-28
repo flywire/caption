@@ -1,6 +1,6 @@
 # caption - Manage markdown captions
 
-*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply to captions for any content with the next candidate likely to be tables.
+*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply captions to any content and the next candidate likely to be tables.
 
 *caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) so it might conflict with that extension until it is refactored.
 
@@ -33,11 +33,15 @@ becomes
 
 ### Install
 
-*caption* can be installed via `pip3 install git+https://github.com/flywire/caption`
+*caption* can be installed via PyPI using:
+
+```	
+pip install caption	
+```
 
 ### Standard Usage
 
-When parsing your input, you can add *yafg* to Markdown as follows:
+When parsing your input, you can add *caption* to Markdown as follows:
 
 ```python
 import yafg
@@ -66,15 +70,11 @@ MARKDOWN = {
 
 Currently supported options are listed below:
 
-* `stripTitle` (default: `False`):
+* `captionPrefixText` (default: `"Figure"`):
 
-    Removes the original `title` attribute from the `<img />` element. Since its
-    usage is discouraged anyways (see below), this may be an option worth
-    considering.
-
-* `captionClass` (default: `""`):
-
-    The CSS class to add to the generated `<caption />` element.
+    The text to show at the front of the caption. A final non-breaking space
+    is inserted between the content of `captionPrefixText` and the actual figure
+    number.
 
 * `capcaptionClass` (default: `""`):
 
@@ -90,11 +90,15 @@ Currently supported options are listed below:
     The CSS class to add to the `<span />` element generated for the figure
     number.
 
-* `captionPrefixText` (default: `"Figure"`):
+* `captionClass` (default: `""`):
 
-    The text to show at the front of the caption.. A final non-breaking space
-    is inserted between the content of `captionPrefixText` and the actual figure
-    number.
+    The CSS class to add to the generated `<caption />` element.
+
+* `stripTitle` (default: `False`):
+
+    Removes the original `title` attribute from the `<img />` element. Since its
+    usage is discouraged anyways (see below), this may be an option worth
+    considering.
 
 ## Why?
 
