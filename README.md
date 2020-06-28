@@ -1,8 +1,8 @@
 # caption - Manage markdown captions
 
-*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply to captions for any content and the next candidate will likely be tables.
+*caption* manages captions by applying style and auto-numbering to figure content. The vision is to apply to captions for any content with the next candidate likely to be tables.
 
-It is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) so will conflict with that extension until it is refactored.
+*caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) so it might conflict with that extension until it is refactored.
 
 # yafg - Yet Another Figure Generator
 
@@ -33,11 +33,7 @@ becomes
 
 ### Install
 
-*yafg* can be installed via PyPI using:
-
-```
-pip install yafg
-```
+*caption* can be installed via `pip3 install git+https://github.com/flywire/caption`
 
 ### Standard Usage
 
@@ -53,7 +49,7 @@ outputString = markdown.markdown(inputString, extensions = [yafg.YafgExtension(s
 
 ### Pelican
 
-Pelican users can add *yafg* to their generator process by adding it to the
+Pelican users can add *caption* to their generator process by adding it to the
 `MARKDOWN` variable in the `pelicanconf.py` as follows:
 
 ```python
