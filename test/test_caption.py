@@ -44,7 +44,7 @@ Nothing should change here whilst using caption."""
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption>Title</figcaption>
 </figure>"""
@@ -56,7 +56,7 @@ Nothing should change here whilst using caption."""
 ![This is a rather long alt text that spans multiple lines. This may be
 necessary to describe a picture for the blind.](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="This is a rather long alt text that spans multiple lines. This may be
 necessary to describe a picture for the blind." src="/path/to/image.png" title="Title" />
 <figcaption>Title</figcaption>
@@ -70,7 +70,7 @@ necessary to describe a picture for the blind." src="/path/to/image.png" title="
 the readers a good figcaption. It may contain a description of the image as well
 as sources.")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="This is a very long title. It is used to give
 the readers a good figcaption. It may contain a description of the image as well
 as sources." />
@@ -83,7 +83,7 @@ as sources.</figcaption>
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption>Title</figcaption>
 </figure>"""
@@ -94,22 +94,22 @@ as sources.</figcaption>
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure class="testclass">
+<figure class="testclass" id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption>Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(figureClass="testclass")])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(contentClass="testclass")])
         self.assertEqual(expectedString, outString)
 
     def test_figcaption_class(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption class="testclass">Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(figcaptionClass="testclass")])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(captionClass="testclass")])
         self.assertEqual(expectedString, outString)
 
     def test_figure_numbering(self):
@@ -118,46 +118,68 @@ as sources.</figcaption>
 
 ![alt text 2](/path/to/image2.png "Title 2")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>
-<figure>
+<figure id="_figure-1">
 <img alt="alt text 2" src="/path/to/image2.png" title="Title 2" />
 <figcaption><span>Figure&nbsp;2:</span> Title 2</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(figureNumbering=True)])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(captionNumbering=True)])
         self.assertEqual(expectedString, outString)
 
     def test_figure_number_class(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption><span class="testclass">Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(figureNumbering=True, figureNumberClass="testclass")])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(captionNumbering=True, captionPrefixClass="testclass")])
         self.assertEqual(expectedString, outString)
 
     def test_figure_number_text(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
-<figure>
+<figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption><span>Abbildung&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(figureNumbering=True, figureNumberText="Abbildung")])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(captionNumbering=True, captionPrefix="Abbildung")])
+        self.assertEqual(expectedString, outString)
+
+    def test_attribute_preservation(self):
+        inString = """\
+![alt text](/path/to/image.png "Title"){: #someid .someclass somekey='some value' }"""
+        expectedString = """\
+<figure id="_figure-1">
+<img alt="alt text" class="someclass" id="someid" somekey="some value" src="/path/to/image.png" title="Title" />
+<figcaption>Title</figcaption>
+</figure>"""
+        outString = markdown.markdown(inString, extensions = ["attr_list", caption.captionExtension()])
+        self.assertEqual(expectedString, outString)
+
+    def test_image_in_link(self):
+        inString = """\
+[![alt text](/path/to/image.png "Title")](/path/to/link.html)"""
+        expectedString = """\
+<figure id="_figure-1">
+<a href="/path/to/link.html"><img alt="alt text" src="/path/to/image.png" title="Title" /></a>
+<figcaption>Title</figcaption>
+</figure>"""
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension()])
         self.assertEqual(expectedString, outString)
 
     def test_combined_options(self):
         inString = """\
-![alt text](/path/to/image.png "Title")"""
+[![alt text](/path/to/image.png "Title"){: #someid .someclass somekey='some value' }](/path/to/link.html)"""
         expectedString = """\
-<figure class="testclass1">
-<img alt="alt text" src="/path/to/image.png" />
+<figure class="testclass1" id="_figure-1">
+<a href="/path/to/link.html"><img alt="alt text" class="someclass" id="someid" somekey="some value" src="/path/to/image.png" /></a>
 <figcaption class="testclass2"><span class="testclass3">Abbildung&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(stripTitle=True, figureClass="testclass1", figcaptionClass="testclass2", figureNumbering=True, figureNumberClass="testclass3", figureNumberText="Abbildung")])
+        outString = markdown.markdown(inString, extensions = ["attr_list", caption.captionExtension(stripTitle=True, contentClass="testclass1", captionClass="testclass2", captionNumbering=True, captionPrefixClass="testclass3", captionPrefix="Abbildung")])
         self.assertEqual(expectedString, outString)

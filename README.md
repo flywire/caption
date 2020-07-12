@@ -71,23 +71,23 @@ Currently supported options are listed below:
     is inserted between the content of `captionPrefix` and the actual figure
     number.
 
-* `capcaptionClass` (default: `""`):
-
-    The CSS class to add to the generated `<capcaption />` element.
-
 * `captionNumbering` (default: `False`):
 
-    Adds a caption number like "Figure 1:" in front of the caption. It's
-	wrapped in a `<span />` for easier styling.
+    Adds a caption number like "Figure 1:" to the caption prefix. It's
+    wrapped in a `<span />` for easier styling.
 
-* `captionNumberClass` (default: `""`):
+* `captionPrefixClass` (default: `""`):
 
-    The CSS class to add to the `<span />` element generated for the figure
-    number.
+    The CSS class to add to the `<span />` element generated for the caption
+    prefix.
 
 * `captionClass` (default: `""`):
 
-    The CSS class to add to the generated `<caption />` element.
+    The CSS class to add to the generated caption element.
+
+* `contentClass` (default: `""`):
+
+    The CSS class to add to the generated content element.
 
 * `stripTitle` (default: `False`):
 

@@ -11,90 +11,86 @@ from xml.etree import ElementTree
 
 class captionTreeprocessor(Treeprocessor):
     def __init__(
-            self,
-            md,
-            stripTitle,
-            captionClass,
-            capcaptionClass,
-            captionNumbering,
-            captionNumberClass,
-            captionPrefix):
+        self,
+        md,
+        captionPrefix,
+        captionNumbering,
+        captionPrefixClass,
+        captionClass,
+        contentClass,
+        stripTitle):
         self.md = md
-        self.stripTitle = stripTitle
-        self.captionClass = captionClass
-        self.capcaptionClass = capcaptionClass
+        self.captionPrefix = captionPrefix
         self.captionNumbering = captionNumbering
         self.captionNumber = 0
-        self.captionNumberClass = captionNumberClass
-        self.captionPrefix = captionPrefix
+        self.captionPrefixClass = captionPrefixClass
+        self.captionClass = captionClass
+        self.contentClass = contentClass
+        self.stripTitle = stripTitle
+
+    def buildContentElement(self, par):
+        attrib = par.attrib
+        par.clear()
+        par.tag = "figure"
+        for k, v in attrib.items():
+            par.set(k, v)
+        if self.contentClass is not "":
+            par.set("class", self.contentClass)
+        par.set("id", "_caption-{}".format(self.captionNumber))
+        par.text = "\n"
+        par.tail = "\n"
+
+
+    def buildCaptionElement(self, par, title):
+        capcaption = ElementTree.SubElement(par, "figcaption")
+        if self.captionClass is not "":
+            capcaption.set("class", self.captionClass)
+        if self.captionNumbering:
+            captionPrefixSpan = ElementTree.SubElement(capcaption, "span")
+            captionPrefixSpan.text = "{}&nbsp;{}:".format(self.captionPrefix, self.captionNumber)
+            captionPrefixSpan.tail = " {}".format(title)
+            if self.captionPrefixClass is not "":
+                captionPrefix.set("class", self.captionPrefixClass)
+        else:
+            capcaption.text = title
+        capcaption.tail = "\n"
 
     def run(self, root):
         for par in root.findall("./p[img]"):
             self.captionNumber += 1
-
-            attrib = par.attrib
             img = par.find("img")
-            title = img.get("title")
-
-            par.clear()
-            par.tag = "figure"
-
-            # Allow caption before or after
-
-            # Object starts here
-            for k, v in attrib.items():
-                par.set(k, v)
-            if self.captionClass is not "":
-                par.set("class", self.captionClass)
-            par.text = "\n"
-
+            self.buildContentElement(par)
             img.tail = "\n"
-            # Images only
             if self.stripTitle:
                 del img.attrib["title"]
             par.append(img)
-
-            # Caption starts here
-            capcaption = ElementTree.SubElement(par, "figcaption")
-            if self.capcaptionClass is not "":
-                capcaption.set("class", self.capcaptionClass)
-
-            if self.captionNumbering:
-                captionNumberSpan = ElementTree.SubElement(capcaption, "span")
-                captionNumberSpan.text = "{}&nbsp;{}:".format(self.captionPrefix, self.captionNumber)
-                captionNumberSpan.tail = " {}".format(title)
-                if self.captionNumberClass is not "":
-                    captionNumberSpan.set("class", self.captionNumberClass)
-            else:
-                capcaption.text = title
-
-            capcaption.tail = "\n"
+            self.buildCaptionElement(par, img.get("title"))
 
 class captionExtension(Extension):
     def __init__(self, **kwargs):
         self.config = {
-                "stripTitle" : [False, "Strip the title from the <img />."],
-                "captionClass" : ["", "CSS class to add to the <caption /> element."],
-                "capcaptionClass" : ["", "CSS class to add to the <capcaption /> element."],
-                "captionNumbering" : [False, "Show the caption number in front of the image caption."],
-                "captionNumberClass" : ["", "CSS class to add to the caption number <span /> element."],
-                "captionPrefix" : ["Figure", "The text to show at the front of the caption."],
+            "captionPrefix" : ["Figure", "The text to show in front of the image caption."],
+            "captionNumbering" : [False, "Add the caption number to the prefix."],
+            "captionPrefixClass" : ["", "CSS class to add to the caption prefix <span /> element."],
+            "captionClass" : ["", "CSS class to add to the caption element."],
+            "contentClass" : ["", "CSS class to add to the content element."],
+            "stripTitle" : [False, "Strip the title from the <img />."],
         }
         super(captionExtension, self).__init__(**kwargs)
 
     def extendMarkdown(self, md):
         md.treeprocessors.register(
-                captionTreeprocessor(
-                    md,
-                    stripTitle=self.getConfig("stripTitle"),
-                    captionClass=self.getConfig("captionClass"),
-                    capcaptionClass=self.getConfig("capcaptionClass"),
-                    captionNumbering=self.getConfig("captionNumbering"),
-                    captionNumberClass=self.getConfig("captionNumberClass"),
-                    captionPrefix=self.getConfig("captionPrefix"),
-                ),
-                "captiontreeprocessor",
-                15)
+            captionTreeprocessor(
+                md,
+                captionPrefix=self.getConfig("captionPrefix"),
+                captionNumbering=self.getConfig("captionNumbering"),
+                captionPrefixClass=self.getConfig("captionPrefixClass"),
+                captionClass=self.getConfig("captionClass"),
+                contentClass=self.getConfig("contentClass"),
+                stripTitle=self.getConfig("stripTitle"),
+            ),
+            "captiontreeprocessor",
+            8)
 
 def makeExtension(**kwargs):
     return captionExtension(**kwargs)
