@@ -40,31 +40,30 @@ class captionTreeprocessor(Treeprocessor):
         par.text = "\n"
         par.tail = "\n"
 
-
     def buildCaptionElement(self, par, title):
-        capcaption = ElementTree.SubElement(par, "figcaption")
+        caption = ElementTree.SubElement(par, "figcaption")
         if self.captionClass is not "":
-            capcaption.set("class", self.captionClass)
+            caption.set("class", self.captionClass)
         if self.captionNumbering:
-            captionPrefixSpan = ElementTree.SubElement(capcaption, "span")
+            captionPrefixSpan = ElementTree.SubElement(caption, "span")
             captionPrefixSpan.text = "{}&nbsp;{}:".format(self.captionPrefix, self.captionNumber)
             captionPrefixSpan.tail = " {}".format(title)
             if self.captionPrefixClass is not "":
                 captionPrefix.set("class", self.captionPrefixClass)
         else:
-            capcaption.text = title
-        capcaption.tail = "\n"
+            caption.text = title
+        caption.tail = "\n"
 
     def run(self, root):
         for par in root.findall("./p[img]"):
-            self.captionNumber += 1
             img = par.find("img")
+            self.captionNumber += 1
             self.buildContentElement(par)
             img.tail = "\n"
-            if self.stripTitle:
-                del img.attrib["title"]
             par.append(img)
             self.buildCaptionElement(par, img.get("title"))
+            if self.stripTitle:
+                del img.attrib["title"]
 
 class captionExtension(Extension):
     def __init__(self, **kwargs):
