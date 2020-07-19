@@ -139,7 +139,10 @@ class captionTreeprocessor(Treeprocessor):
                     par.append(a)
                     title = img.get("title")
                 else:
-                    img.tail = "\n"
+                    if img.tail is None:
+                        img.tail = "\n"
+                    else:
+                        img.tail += "\n"
                     par.append(img)
                     title = img.get("title")
             self.buildCaptionElement(par, title)
