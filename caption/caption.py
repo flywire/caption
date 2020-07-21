@@ -14,7 +14,7 @@ from xml.etree import ElementTree
 class captionTreeprocessor(Treeprocessor):
     def __init__(
         self,
-		name = "figure",
+        name = "figure",
         caption_prefix = None,
         numbering = True,
         top_caption = True,
@@ -22,11 +22,10 @@ class captionTreeprocessor(Treeprocessor):
         caption_class = None,
         content_class = None,
         id_prefix = None,
-        special_process = None,
+        link_process = None,
         content_tag = None,
         caption_tag = "figcaption",
         prefix_tag = "span",
-        linked_process = None,
         id = None
         ):
 
@@ -36,24 +35,37 @@ class captionTreeprocessor(Treeprocessor):
         else:
             self.caption_prefix = name.capitalize()
         self.numbering = numbering
-        self.caption_number = 0
+        self.number = 0
         self.top_caption = top_caption
         self.caption_prefix_class = caption_prefix_class
         self.caption_class = caption_class
         self.content_class = content_class
         self.id_prefix = id_prefix
-        self.special_process = special_process
+        self.link_process = link_process
         if content_tag is not None:
            self.content_tag = content_tag
         else:
            self.content_tag = "div class={}".format(name)
         self.caption_tag = caption_tag
         self.prefix_tag = prefix_tag
-        self.linked_process = linked_process
         if id is not None:
            self.id = id
         else:
            self.id = "_{}-".format(name)
+
+    def makeContentType(self):
+        pass
+        Figure = captionTreeprocessor(
+            top_caption = False,
+            content_tag = "figure",
+            link_process = "strip_title")
+        Table = captionTreeprocessor(
+            name = "table",
+            content_tag = "table",
+            caption_tag = "caption",
+            link_process = "line_2_caption")
+        Listing = captionTreeprocessor(
+            name = "listing")
 
     @staticmethod
     def matchChildren(par):
@@ -73,33 +85,40 @@ class captionTreeprocessor(Treeprocessor):
         par.tag = Type.content_tag
         for k, v in attrib.items():
             par.set(k, v)
-        par.set("id", "_{}-{}".format(Type.name, Type.caption_number))
+        if Type.content_class is not None:
+            par.set("class", Type.content_class)
+        par.set("id", "_{}-{}".format(Type.name, Type.number))
         par.text = "\n"
         par.tail = "\n"
 
     def buildCaptionElement(self, par, title, Type):
         caption = ElementTree.SubElement(par, Type.caption_tag)
+        if Type.caption_class is not None:
+            caption.set("class", Type.caption_class)
         if Type.numbering:
             caption_prefixSpan = ElementTree.SubElement(caption, Type.prefix_tag)
-            caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.caption_number)
+            caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
             caption_prefixSpan.tail = " {}".format(title)
+            if Type.caption_prefix_class is not None:
+                caption_prefix.set("class", Type.caption_prefix_class)
         else:
             caption.text = title
+
         caption.tail = "\n"
 
     def run(self, root):
+#        makeContentType() - not working
         Figure = captionTreeprocessor(
             top_caption = False,
             content_tag = "figure",
-            linked_process = "strip_title")
+            link_process = "strip_title")
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
             caption_tag = "caption",
-            linked_process = "line_2_caption")
+            link_process = "line_2_caption")
         Listing = captionTreeprocessor(
-            name = "listing")
-
+            name = "listing")	
         for par in root.findall("./p"):
             if par.text and par.text.startswith("Table: "):
                 Type = Table
@@ -113,7 +132,7 @@ class captionTreeprocessor(Treeprocessor):
                     continue
                 Type = Figure
 
-            Type.caption_number += 1
+            Type.number += 1
             self.buildContentElement(par, Type)
 
             if Type.name == "figure":
@@ -129,6 +148,8 @@ class captionTreeprocessor(Treeprocessor):
                 title = img.get("title")
 
             self.buildCaptionElement(par, title, Type)
+            if Type.name == "figure" and Type.link_process == "strip_title":
+                del img.attrib["title"]
 
 
 class captionExtension(Extension):
@@ -139,7 +160,7 @@ class captionExtension(Extension):
             "caption_prefix_class" : ["", "CSS class to add to the caption prefix <span /> element."],
             "caption_class" : ["", "CSS class to add to the caption element."],
             "content_class" : ["", "CSS class to add to the content element."],
-#            "stripTitle" : [False, "Strip the title from the <img />."],
+            "link_process" : ["", "Some content types support linked processes."],
         }
         super(captionExtension, self).__init__(**kwargs)
 
@@ -152,7 +173,7 @@ class captionExtension(Extension):
                 caption_prefix_class=self.getConfig("caption_prefix_class"),
                 caption_class=self.getConfig("caption_class"),
                 content_class=self.getConfig("content_class"),
- #               stripTitle=self.getConfig("stripTitle"),
+                link_process=self.getConfig("link_process"),
             ),
             "captiontreeprocessor",
             8)
