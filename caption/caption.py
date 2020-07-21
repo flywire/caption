@@ -1,10 +1,15 @@
-# caption - Manage markdown captions
-# https://github.com/flywire/caption
-# Copyright (c) 2020 flywire
-# forked from yafg - https://git.sr.ht/~ferruck/yafg
-# Copyright (c) 2019-2020 Philipp Trommler
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
+```
+caption - Manage markdown captions
+
+Applying style and auto-numbering to Python-Markdown content.
+
+https://github.com/flywire/caption
+Copyright (c) 2020 flywire
+forked from yafg - https://git.sr.ht/~ferruck/yafg
+Copyright (c) 2019-2020 Philipp Trommler
+
+SPDX-License-Identifier: GPL-3.0-or-later
+```
 
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
@@ -13,6 +18,7 @@ from xml.etree import ElementTree
 
 class captionTreeprocessor(Treeprocessor):
     def __init__(
+        """ Make content types and attributes. """
         self,
         name = "figure",
         caption_prefix = None,
@@ -54,7 +60,7 @@ class captionTreeprocessor(Treeprocessor):
            self.id = "_{}-".format(name)
 
     def makeContentType(self):
-        pass
+        """ Define content types and attributes. """
         Figure = captionTreeprocessor(
             top_caption = False,
             content_tag = "figure",
@@ -69,6 +75,7 @@ class captionTreeprocessor(Treeprocessor):
 
     @staticmethod
     def matchChildren(par):
+        """ Find images in links. """
         a = None
         img = par.find("./img")
         if img is None:
@@ -80,6 +87,7 @@ class captionTreeprocessor(Treeprocessor):
         return (img, a)
 
     def buildContentElement(self, par, Type):
+        """ Format the content element containing the caption. """
         attrib = par.attrib
         par.clear()
         par.tag = Type.content_tag
@@ -92,6 +100,7 @@ class captionTreeprocessor(Treeprocessor):
         par.tail = "\n"
 
     def buildCaptionElement(self, par, title, Type):
+        """ Format the caption. """
         caption = ElementTree.SubElement(par, Type.caption_tag)
         if Type.caption_class is not None:
             caption.set("class", Type.caption_class)
@@ -107,6 +116,7 @@ class captionTreeprocessor(Treeprocessor):
         caption.tail = "\n"
 
     def run(self, root):
+        """ Find and format all captions. """
 #        makeContentType() - not working
         Figure = captionTreeprocessor(
             top_caption = False,
@@ -153,7 +163,10 @@ class captionTreeprocessor(Treeprocessor):
 
 
 class captionExtension(Extension):
+    """ caption Extension. """
+
     def __init__(self, **kwargs):
+        """ Setup configs. """
         self.config = {
             "caption_prefix" : ["Figure", "The text to show in front of the image caption."],
             "numbering" : [True, "Add the caption number to the prefix."],
@@ -165,6 +178,7 @@ class captionExtension(Extension):
         super(captionExtension, self).__init__(**kwargs)
 
     def extendMarkdown(self, md):
+        """ Add pieces to Markdown. """
         md.treeprocessors.register(
             captionTreeprocessor(
                 md,
