@@ -1,15 +1,15 @@
 # caption - manages markdown captions
 
-*caption* manages captions by applying style and auto-numbering to content. The
-vision is to apply captions to any content. For now only figures are supported
-but the next candidate is likely to be tables.
+*caption* manages captions by applying style and auto-numbering to markdown content.
+It works on Figures, Tables and Other content such as Listings but is flexible and
+should work for nearly any content.
 
 *caption* is a fork of [yafg](https://git.sr.ht/~ferruck/yafg) - yet another
 figure generator plugin for Python's Markdown. It's written and tested with
 Python 2.7 and Python 3.6 as well as Markdown 3.1.1, but aims at supporting as
 many versions as possible. If you encounter any problems with *caption* please
-raise an [issue](https://github.com/flywire/caption/issues), or perhaps you want
-to contact me through the e-mail address on my profile to contribute.
+raise an [issue](https://github.com/flywire/caption/issues), or use the profile
+contact details.
 
 It uses the `title` attribute given to an image within Markdown to generate a
 `<figure>` environment with a `<figcaption>` containing the `title`'s text,
@@ -22,11 +22,14 @@ e.g.:
 becomes
 
 ```html
-<figure>
-<img alt="Alt text" src="/path/to/image.png" title="This is the title of the image." />
-<figcaption>This is the title of the image.</figcaption>
+<figure id="_figure-1">
+<img alt="Alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Captioned figure</figcaption>
 </figure>
 ```
+
+A new markdown syntax is added for tables and other content which requires 
+lines to start with "Table: " or "Listing: " respectively.
 
 ## How?
 
@@ -36,29 +39,35 @@ becomes
 
 ### Standard Usage
 
-When parsing your input, you can add *caption* to Markdown as follows:
+Python markdown extensions are incorporated into other applications.
+
+### MkDocs
+
+MkDocs users can add *caption* to their generator process by adding it to the
+`mkdocs.yml` `markdown_extensions` section:
+
+```python
+site_name: captionTest
+# theme:
+#    name: material
+# extra_css: [extra.css]
+markdown_extensions:
+    - caption:
+        numbering: false
+nav:
+    - Home: index.md
+```
+
+### Python
+
+Python will parse input to Markdown with *caption* as follows:
 
 ```python
 import caption
 
 # ...
 
-outputString = markdown.markdown(inputString, extensions = [caption.captionExtension(stripTitle=False)])
-```
-
-### Pelican
-
-Pelican users can add *caption* to their generator process by adding it to the
-`MARKDOWN` variable in the `pelicanconf.py` as follows:
-
-```python
-MARKDOWN = {
-    'extensions_configs': {
-        'caption': {
-            'stripTitle': 'False',
-        },
-    },
-}
+outputString = markdown.markdown(inputString, extensions = [caption.captionExtension(numbering=false)])
 ```
 
 ### Options
@@ -71,29 +80,28 @@ Currently supported options are listed below:
     is inserted between the content of `captionPrefix` and the actual figure
     number.
 
-* `captionNumbering` (default: `False`):
+* `numbering` (default: `True`):
 
-    Adds a caption number like "Figure 1:" to the caption prefix. It's
-    wrapped in a `<span />` for easier styling.
+    Adds a caption number like "Figure 1:" in front of the caption. It's
+	wrapped in a `<span />` for easier styling.
 
-* `captionPrefixClass` (default: `""`):
+* `content_class` (default: `""`):
 
-    The CSS class to add to the `<span />` element generated for the caption
-    prefix.
+    The CSS class to add to the generated `<content />` element.
 
-* `captionClass` (default: `""`):
+* `caption_class` (default: `""`):
 
-    The CSS class to add to the generated caption element.
+    The CSS class to add to the generated `<caption />` element.
 
-* `contentClass` (default: `""`):
+* `caption_prefix_class` (default: `""`):
 
-    The CSS class to add to the generated content element.
+    The CSS class to add to the `<span />` element generated for the caption prefix.
 
-* `stripTitle` (default: `False`):
+* `link_process` (default: ""):
 
-    Removes the original `title` attribute from the `<img />` element. Since its
-    usage is discouraged anyways (see below), this may be an option worth
-    considering.
+    Content types may have a built-in link_process, for example figures have
+	"strip_title" which removes the original `title` attribute from the `<img />`
+	element. Its usage is discouraged and this format my be preferred.
 
 ## Why?
 
@@ -108,8 +116,8 @@ yafg arose from the dissatisfaction with the existing solutions, namely:
   cannot handle multi-line descriptions and uses the `alt` attribute for the
   `<figcaption>`.
 
-Using the `alt` attribute to fill the `<figcaption>` is not correct, because [as
-the standard states](https://www.w3.org/wiki/Html/Elements/img)
+Using the `alt` attribute to fill the `<figcaption>` is not correct as described
+in the standard (https://www.w3.org/wiki/Html/Elements/img).
 
 > [...] the alternative text is a replacement for the image, not a description
 > [...]
@@ -120,7 +128,7 @@ cannot see it, for example because they're blind or their internet connection is
 too slow. A figure's caption in turn should provide a description helping to
 understand the content of the image.
 
-The `title` attribute on the other hand should contain "[a]dvisory information
+The `title` attribute on the other hand should contain "advisory information
 associated with the element ([W3C Core Attribute
 List](https://www.w3.org/wiki/Html/Attributes/_Global)). This is rather vague
 and often used by browser vendors to show tooltips containing the title. Since
@@ -129,6 +137,26 @@ tooltips are highly problematic for a11y reasons and the browser support varies,
 Standard](https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute)).
 This makes it an ideal candidate to store the wanted `figcaption` inside of the
 standard Markdown syntax.
+
+## CSS
+
+*caption* fully supports CSS (Cascading Style Sheets) by adding tags to style
+your content. CSS can be placed against the image eg {: style="height:200px"},
+in the settings eg: {: style="width: 100%"} or in a CSS file linked in the HTML 
+eg <link rel="stylesheet" href="styles.css">.
+
+```css
+figcaption span:first-child {
+    font-weight: bold;
+}
+```
+ There are further examples in the [wiki](https://github.com/flywire/caption/wiki).
+
+## Customisable
+
+If the settings aren't flexible enough the source code can be changed and
+reinstalled. Many of the settings are easily identifiable in the source code
+and the the [wiki](https://github.com/flywire/caption/wiki) has build instructions.
 
 ## License
 
