@@ -95,7 +95,7 @@ class captionTreeprocessor(Treeprocessor):
             caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
             caption_prefixSpan.tail = " {}".format(title)
             if Type.caption_prefix_class is not None:
-                caption_prefix.set("class", Type.caption_prefix_class)
+                caption_prefixSpan.set("class", Type.caption_prefix_class)
         else:
             caption.text = title
 
