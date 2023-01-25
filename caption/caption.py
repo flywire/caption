@@ -68,7 +68,8 @@ class CaptionTreeprocessor(Treeprocessor):
                     a = None
         return img, a
 
-    def build_content_element(self, par, type_):
+    @staticmethod
+    def build_content_element(par, type_):
         # Format the content element containing the caption
         attrib = par.attrib
         par.clear()
@@ -81,7 +82,8 @@ class CaptionTreeprocessor(Treeprocessor):
         par.text = "\n"
         par.tail = "\n"
 
-    def build_caption_element(self, par, title, type_):
+    @staticmethod
+    def build_caption_element(par, title, type_):
         # Format the caption
         caption = ElementTree.SubElement(par, type_.caption_tag)
         if type_.caption_class:
