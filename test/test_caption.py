@@ -61,6 +61,17 @@ Listing: Simple listing test"""
         outString = markdown.markdown(inString, extensions = [caption.captionExtension()])
         self.assertEqual(expectedString, outString)
 
+    def test_simple_image_without_title(self):
+        inString = """\
+![alt text](/path/to/image.png)"""
+        expectedString = """\
+<figure id="_figure-1">
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1</span></figcaption>
+</figure>"""
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension()])
+        self.assertEqual(expectedString, outString)
+
     def test_multiline_alt(self):
         inString = """\
 ![This is a rather long alt text that spans multiple lines. This may be

@@ -92,8 +92,12 @@ class captionTreeprocessor(Treeprocessor):
             caption.set("class", Type.caption_class)
         if Type.numbering:
             caption_prefixSpan = ElementTree.SubElement(caption, Type.prefix_tag)
-            caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
-            caption_prefixSpan.tail = " {}".format(title)
+            if title:
+                caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
+                caption_prefixSpan.tail = " {}".format(title)
+            else:
+                caption_prefixSpan.text = "{}&nbsp;{}".format(Type.caption_prefix, Type.number)
+                caption_prefixSpan.tail = ""
             if Type.caption_prefix_class is not None:
                 caption_prefixSpan.set("class", Type.caption_prefix_class)
         else:
@@ -144,7 +148,7 @@ class captionTreeprocessor(Treeprocessor):
                 title = img.get("title")
 
             self.buildCaptionElement(par, title, Type)
-            if Type.name == "figure" and Type.link_process == "strip_title":
+            if Type.name == "figure" and Type.link_process == "strip_title" and title:
                 del img.attrib["title"]
 
 
