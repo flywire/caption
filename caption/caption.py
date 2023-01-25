@@ -79,7 +79,7 @@ class captionTreeprocessor(Treeprocessor):
         par.tag = Type.content_tag
         for k, v in attrib.items():
             par.set(k, v)
-        if Type.content_class is not None:
+        if Type.content_class:
             par.set("class", Type.content_class)
         par.set("id", "_{}-{}".format(Type.name, Type.number))
         par.text = "\n"
@@ -114,7 +114,8 @@ class captionTreeprocessor(Treeprocessor):
             link_process = "strip_title",
             caption_class=self.caption_class,
             caption_prefix = self.caption_prefix,
-            caption_prefix_class = self.caption_prefix_class)
+            caption_prefix_class = self.caption_prefix_class,
+            content_class = self.content_class)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
