@@ -112,7 +112,8 @@ class captionTreeprocessor(Treeprocessor):
             top_caption = False,
             content_tag = "figure",
             link_process = "strip_title",
-            caption_class=self.caption_class)
+            caption_class=self.caption_class,
+            caption_prefix = self.caption_prefix)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
