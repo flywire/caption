@@ -111,7 +111,7 @@ class captionTreeprocessor(Treeprocessor):
         Figure = captionTreeprocessor(
             top_caption = False,
             content_tag = "figure",
-            link_process = "strip_title",
+            link_process = self.link_process or "strip_title",
             caption_class=self.caption_class,
             caption_prefix = self.caption_prefix,
             caption_prefix_class = self.caption_prefix_class,
@@ -121,7 +121,7 @@ class captionTreeprocessor(Treeprocessor):
             name = "table",
             content_tag = "table",
             caption_tag = "caption",
-            link_process = "line_2_caption")
+            link_process = self.link_process or "line_2_caption")
         Listing = captionTreeprocessor(
             name = "listing")
         for par in root.findall("./p"):

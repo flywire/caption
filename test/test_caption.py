@@ -100,7 +100,7 @@ the readers a good figcaption. It may contain a description of the image as well
 as sources.</figcaption>
 </figure>"""
 
-    def test_strip_title_None(self):
+    def test_strip_title_none(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
@@ -108,7 +108,7 @@ as sources.</figcaption>
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(link_process=None)])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(link_process="none")])
         self.assertEqual(expectedString, outString)
 
     def test_content_class(self):
