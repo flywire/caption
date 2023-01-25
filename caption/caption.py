@@ -115,7 +115,8 @@ class captionTreeprocessor(Treeprocessor):
             caption_class=self.caption_class,
             caption_prefix = self.caption_prefix,
             caption_prefix_class = self.caption_prefix_class,
-            content_class = self.content_class)
+            content_class = self.content_class,
+            numbering = self.numbering)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
