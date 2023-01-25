@@ -98,7 +98,7 @@ class captionTreeprocessor(Treeprocessor):
             else:
                 caption_prefixSpan.text = "{}&nbsp;{}".format(Type.caption_prefix, Type.number)
                 caption_prefixSpan.tail = ""
-            if Type.caption_prefix_class is not None:
+            if Type.caption_prefix_class:
                 caption_prefixSpan.set("class", Type.caption_prefix_class)
         else:
             caption.text = title
@@ -113,14 +113,15 @@ class captionTreeprocessor(Treeprocessor):
             content_tag = "figure",
             link_process = "strip_title",
             caption_class=self.caption_class,
-            caption_prefix = self.caption_prefix)
+            caption_prefix = self.caption_prefix,
+            caption_prefix_class = self.caption_prefix_class)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
             caption_tag = "caption",
             link_process = "line_2_caption")
         Listing = captionTreeprocessor(
-            name = "listing")	
+            name = "listing")
         for par in root.findall("./p"):
             if par.text and par.text.startswith("Table: "):
                 Type = Table
