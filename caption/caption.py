@@ -110,30 +110,16 @@ class CaptionTreeprocessor(Treeprocessor):
     def run(self, root):
         # Find and format all captions
         # Define content types and attributes
-        figure = CaptionTreeprocessor(
-            top_caption=False,
-            content_tag="figure",
-            link_process=self.link_process or "strip_title",
-            caption_class=self.caption_class,
-            caption_prefix=self.caption_prefix,
-            caption_prefix_class=self.caption_prefix_class,
-            content_class=self.content_class,
-            numbering=self.numbering,
-        )
-        table = CaptionTreeprocessor(
-            name="table",
-            content_tag="table",
-            caption_tag="caption",
-            link_process=self.link_process or "line_2_caption",
-        )
-        listing = CaptionTreeprocessor(name="listing")
+        figure = self._build_figure_processor()
+        table = self._build_table_processor()
+        listing = self._build_listing_processor()
         for par in root.findall("./p"):
             if par.text and par.text.startswith("Table: "):
                 obj = table
-                title = par.text[len("Table: ") :]
+                title = par.text[7:]
             elif par.text and par.text.startswith("Listing: "):
                 obj = listing
-                title = par.text[len("Listing: ") :]
+                title = par.text[9:]
             else:
                 img, a = CaptionTreeprocessor.match_children(par)
                 if img is None:
@@ -148,16 +134,36 @@ class CaptionTreeprocessor(Treeprocessor):
                     a.tail = "\n"
                     par.append(a)
                 else:
-                    if img.tail is None:
-                        img.tail = "\n"
-                    else:
-                        img.tail += "\n"
+                    img.tail = img.tail or "" + "\n"
                     par.append(img)
                 title = img.get("title")
 
             self.build_caption_element(par, title, obj)
             if obj.name == "figure" and obj.link_process == "strip_title" and title:
                 del img.attrib["title"]
+
+    def _build_listing_processor(self):
+        return CaptionTreeprocessor(name="listing")
+
+    def _build_table_processor(self):
+        return CaptionTreeprocessor(
+            name="table",
+            content_tag="table",
+            caption_tag="caption",
+            link_process=self.link_process or "line_2_caption",
+        )
+
+    def _build_figure_processor(self):
+        return CaptionTreeprocessor(
+            top_caption=False,
+            content_tag="figure",
+            link_process=self.link_process or "strip_title",
+            caption_class=self.caption_class,
+            caption_prefix=self.caption_prefix,
+            caption_prefix_class=self.caption_prefix_class,
+            content_class=self.content_class,
+            numbering=self.numbering,
+        )
 
 
 class CaptionExtension(Extension):
