@@ -63,11 +63,14 @@ nav:
 Python will parse input to Markdown with *caption* as follows:
 
 ```python
-import caption
+import markdown
+from caption import CaptionExtension
 
 # ...
 
-outputString = markdown.markdown(inputString, extensions = [caption.captionExtension(numbering=false)])
+outputString = markdown.markdown(
+    input_string, extensions=[CaptionExtension(numbering=False)]
+)
 ```
 
 ### Options
