@@ -88,7 +88,7 @@ class captionTreeprocessor(Treeprocessor):
     def buildCaptionElement(self, par, title, Type):
         # Format the caption
         caption = ElementTree.SubElement(par, Type.caption_tag)
-        if Type.caption_class is not None:
+        if Type.caption_class:
             caption.set("class", Type.caption_class)
         if Type.numbering:
             caption_prefixSpan = ElementTree.SubElement(caption, Type.prefix_tag)
@@ -111,7 +111,8 @@ class captionTreeprocessor(Treeprocessor):
         Figure = captionTreeprocessor(
             top_caption = False,
             content_tag = "figure",
-            link_process = "strip_title")
+            link_process = "strip_title",
+            caption_class=self.caption_class)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",

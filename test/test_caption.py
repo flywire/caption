@@ -129,7 +129,7 @@ as sources.</figcaption>
 <figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption class="testclass"><span>Figure&nbsp;1:</span> Title</figcaption>
-</figure>>"""
+</figure>"""
         outString = markdown.markdown(inString, extensions = [caption.captionExtension(caption_class="testclass")])
         self.assertEqual(expectedString, outString)
 
