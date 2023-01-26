@@ -26,7 +26,6 @@ class CaptionTreeprocessor(Treeprocessor):
         md=None,
         caption_prefix="",
         numbering=True,
-        top_caption=True,
         caption_prefix_class=None,
         caption_class=None,
         content_class=None,
@@ -39,7 +38,6 @@ class CaptionTreeprocessor(Treeprocessor):
         self.caption_prefix = caption_prefix
         self.numbering = numbering
         self.number = 0
-        self.top_caption = top_caption
         self.caption_prefix_class = caption_prefix_class
         self.caption_class = caption_class
         self.content_class = content_class
@@ -124,14 +122,6 @@ class FigureCaptionTreeProcessor(CaptionTreeprocessor):
     name = "figure"
     content_tag = "figure"
 
-    # top_caption = False,
-    # content_tag = "figure",
-    # link_process = self.link_process or "strip_title",
-    # caption_class = self.caption_class,
-    # caption_prefix = self.caption_prefix,
-    # caption_prefix_class = self.caption_prefix_class,
-    # content_class = self.content_class,
-    # numbering = self.numbering,
     def matches(self, par):
         self._a = None
         self._img = par.find("./img")
@@ -163,8 +153,6 @@ class FigureCaptionTreeProcessor(CaptionTreeprocessor):
 class TableCaptionTreeProcessor(CaptionTreeprocessor):
     name = "table"
     content_tag = "div class=table"
-
-    # content_tag = "table",
     # caption_tag = "caption",
     # link_process = self.link_process or "line_2_caption",
     def matches(self, par):
