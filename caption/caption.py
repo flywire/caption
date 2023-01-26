@@ -194,15 +194,21 @@ class CaptionExtension(Extension):
 
     def extendMarkdown(self, md):
         # Add pieces to Markdown
+        numbering = self.getConfig("numbering")
+        caption_prefix_class = self.getConfig("caption_prefix_class")
+        caption_class = self.getConfig("caption_class")
+        content_class = self.getConfig("content_class")
+        link_process = self.getConfig("link_process")
+
         md.treeprocessors.register(
             FigureCaptionTreeProcessor(
                 md,
                 caption_prefix=self.getConfig("figure_caption_prefix"),
-                numbering=self.getConfig("numbering"),
-                caption_prefix_class=self.getConfig("caption_prefix_class"),
-                caption_class=self.getConfig("caption_class"),
-                content_class=self.getConfig("content_class"),
-                link_process=self.getConfig("link_process") or "strip_title",
+                numbering=numbering,
+                caption_prefix_class=caption_prefix_class,
+                caption_class=caption_class,
+                content_class=content_class,
+                link_process=link_process or "strip_title",
             ),
             "figurecaptiontreeprocessor",
             8,
@@ -211,11 +217,11 @@ class CaptionExtension(Extension):
             TableCaptionTreeProcessor(
                 md,
                 caption_prefix=self.getConfig("table_caption_prefix"),
-                numbering=self.getConfig("numbering"),
-                caption_prefix_class=self.getConfig("caption_prefix_class"),
-                caption_class=self.getConfig("caption_class"),
-                content_class=self.getConfig("content_class"),
-                link_process=self.getConfig("link_process"),
+                numbering=numbering,
+                caption_prefix_class=caption_prefix_class,
+                caption_class=caption_class,
+                content_class=content_class,
+                link_process=link_process,
             ),
             "tablecaptiontreeprocessor",
             8,
@@ -224,11 +230,11 @@ class CaptionExtension(Extension):
             ListingCaptionTreeProcessor(
                 md,
                 caption_prefix=self.getConfig("listing_caption_prefix"),
-                numbering=self.getConfig("numbering"),
-                caption_prefix_class=self.getConfig("caption_prefix_class"),
-                caption_class=self.getConfig("caption_class"),
-                content_class=self.getConfig("content_class"),
-                link_process=self.getConfig("link_process"),
+                numbering=numbering,
+                caption_prefix_class=caption_prefix_class,
+                caption_class=caption_class,
+                content_class=content_class,
+                link_process=link_process,
             ),
             "listingcaptiontreeprocessor",
             8,
