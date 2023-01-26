@@ -185,11 +185,11 @@ class CaptionExtension(Extension):
                 "The text to show in front of the image caption.",
             ],
             "table_caption_prefix": [
-                "",
+                "Table",
                 "The text to show in front of the table caption.",
             ],
             "listing_caption_prefix": [
-                "",
+                "Listing",
                 "The text to show in front of the listing caption.",
             ],
             "numbering": [True, "Add the caption number to the prefix."],
@@ -208,7 +208,7 @@ class CaptionExtension(Extension):
         md.treeprocessors.register(
             FigureCaptionTreeProcessor(
                 md,
-                caption_prefix=self.getConfig("figure_caption_prefix") or "Figure",
+                caption_prefix=self.getConfig("figure_caption_prefix"),
                 numbering=self.getConfig("numbering"),
                 caption_prefix_class=self.getConfig("caption_prefix_class"),
                 caption_class=self.getConfig("caption_class"),
@@ -221,7 +221,7 @@ class CaptionExtension(Extension):
         md.treeprocessors.register(
             TableCaptionTreeProcessor(
                 md,
-                caption_prefix=self.getConfig("table_caption_prefix") or "Table",
+                caption_prefix=self.getConfig("table_caption_prefix"),
                 numbering=self.getConfig("numbering"),
                 caption_prefix_class=self.getConfig("caption_prefix_class"),
                 caption_class=self.getConfig("caption_class"),
@@ -234,7 +234,7 @@ class CaptionExtension(Extension):
         md.treeprocessors.register(
             ListingCaptionTreeProcessor(
                 md,
-                caption_prefix=self.getConfig("listing_caption_prefix") or "Listing",
+                caption_prefix=self.getConfig("listing_caption_prefix"),
                 numbering=self.getConfig("numbering"),
                 caption_prefix_class=self.getConfig("caption_prefix_class"),
                 caption_class=self.getConfig("caption_class"),
