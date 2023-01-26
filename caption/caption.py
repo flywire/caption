@@ -19,6 +19,7 @@ from xml.etree import ElementTree
 class CaptionTreeprocessor(Treeprocessor):
     """Base class for Caption processors."""
     name = ""
+    content_tag = ""
 
     def __init__(
         self,
@@ -31,12 +32,10 @@ class CaptionTreeprocessor(Treeprocessor):
         content_class=None,
         id_prefix=None,
         link_process=None,
-        content_tag=None,
         caption_tag="figcaption",
         prefix_tag="span",
         id=None,
     ):
-
         self.caption_prefix = caption_prefix
         self.numbering = numbering
         self.number = 0
@@ -46,9 +45,6 @@ class CaptionTreeprocessor(Treeprocessor):
         self.content_class = content_class
         self.id_prefix = id_prefix
         self.link_process = link_process
-        self.content_tag = (
-            "div class={}".format(self.name) if content_tag is None else content_tag
-        )
         self.caption_tag = caption_tag
         self.prefix_tag = prefix_tag
         self.id = id or "_{}-".format(self.name)
@@ -115,6 +111,7 @@ class CaptionTreeprocessor(Treeprocessor):
 
 class ListingCaptionTreeProcessor(CaptionTreeprocessor):
     name = "listing"
+    content_tag = "div class=listing"
 
     def matches(self, par):
         return par.text and par.text.startswith("Listing: ")
@@ -125,6 +122,7 @@ class ListingCaptionTreeProcessor(CaptionTreeprocessor):
 
 class FigureCaptionTreeProcessor(CaptionTreeprocessor):
     name = "figure"
+    content_tag = "figure"
 
     # top_caption = False,
     # content_tag = "figure",
@@ -164,6 +162,7 @@ class FigureCaptionTreeProcessor(CaptionTreeprocessor):
 
 class TableCaptionTreeProcessor(CaptionTreeprocessor):
     name = "table"
+    content_tag = "div class=table"
 
     # content_tag = "table",
     # caption_tag = "caption",
@@ -215,7 +214,6 @@ class CaptionExtension(Extension):
                 caption_class=self.getConfig("caption_class"),
                 content_class=self.getConfig("content_class"),
                 link_process=self.getConfig("link_process") or "strip_title",
-                content_tag="figure",
             ),
             "figurecaptiontreeprocessor",
             8,
