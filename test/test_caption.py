@@ -61,6 +61,17 @@ Listing: Simple listing test"""
         outString = markdown.markdown(inString, extensions = [caption.captionExtension()])
         self.assertEqual(expectedString, outString)
 
+    def test_simple_image_without_title(self):
+        inString = """\
+![alt text](/path/to/image.png)"""
+        expectedString = """\
+<figure id="_figure-1">
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1</span></figcaption>
+</figure>"""
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension()])
+        self.assertEqual(expectedString, outString)
+
     def test_multiline_alt(self):
         inString = """\
 ![This is a rather long alt text that spans multiple lines. This may be
@@ -89,7 +100,7 @@ the readers a good figcaption. It may contain a description of the image as well
 as sources.</figcaption>
 </figure>"""
 
-    def test_strip_title_None(self):
+    def test_strip_title_none(self):
         inString = """\
 ![alt text](/path/to/image.png "Title")"""
         expectedString = """\
@@ -97,7 +108,7 @@ as sources.</figcaption>
 <img alt="alt text" src="/path/to/image.png" title="Title" />
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-        outString = markdown.markdown(inString, extensions = [caption.captionExtension(link_process=None)])
+        outString = markdown.markdown(inString, extensions = [caption.captionExtension(link_process="none")])
         self.assertEqual(expectedString, outString)
 
     def test_content_class(self):
@@ -118,7 +129,7 @@ as sources.</figcaption>
 <figure id="_figure-1">
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption class="testclass"><span>Figure&nbsp;1:</span> Title</figcaption>
-</figure>>"""
+</figure>"""
         outString = markdown.markdown(inString, extensions = [caption.captionExtension(caption_class="testclass")])
         self.assertEqual(expectedString, outString)
 

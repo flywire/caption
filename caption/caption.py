@@ -79,7 +79,7 @@ class captionTreeprocessor(Treeprocessor):
         par.tag = Type.content_tag
         for k, v in attrib.items():
             par.set(k, v)
-        if Type.content_class is not None:
+        if Type.content_class:
             par.set("class", Type.content_class)
         par.set("id", "_{}-{}".format(Type.name, Type.number))
         par.text = "\n"
@@ -88,13 +88,17 @@ class captionTreeprocessor(Treeprocessor):
     def buildCaptionElement(self, par, title, Type):
         # Format the caption
         caption = ElementTree.SubElement(par, Type.caption_tag)
-        if Type.caption_class is not None:
+        if Type.caption_class:
             caption.set("class", Type.caption_class)
         if Type.numbering:
             caption_prefixSpan = ElementTree.SubElement(caption, Type.prefix_tag)
-            caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
-            caption_prefixSpan.tail = " {}".format(title)
-            if Type.caption_prefix_class is not None:
+            if title:
+                caption_prefixSpan.text = "{}&nbsp;{}:".format(Type.caption_prefix, Type.number)
+                caption_prefixSpan.tail = " {}".format(title)
+            else:
+                caption_prefixSpan.text = "{}&nbsp;{}".format(Type.caption_prefix, Type.number)
+                caption_prefixSpan.tail = ""
+            if Type.caption_prefix_class:
                 caption_prefixSpan.set("class", Type.caption_prefix_class)
         else:
             caption.text = title
@@ -107,14 +111,19 @@ class captionTreeprocessor(Treeprocessor):
         Figure = captionTreeprocessor(
             top_caption = False,
             content_tag = "figure",
-            link_process = "strip_title")
+            link_process = self.link_process or "strip_title",
+            caption_class=self.caption_class,
+            caption_prefix = self.caption_prefix,
+            caption_prefix_class = self.caption_prefix_class,
+            content_class = self.content_class,
+            numbering = self.numbering)
         Table = captionTreeprocessor(
             name = "table",
             content_tag = "table",
             caption_tag = "caption",
-            link_process = "line_2_caption")
+            link_process = self.link_process or "line_2_caption")
         Listing = captionTreeprocessor(
-            name = "listing")	
+            name = "listing")
         for par in root.findall("./p"):
             if par.text and par.text.startswith("Table: "):
                 Type = Table
@@ -144,7 +153,7 @@ class captionTreeprocessor(Treeprocessor):
                 title = img.get("title")
 
             self.buildCaptionElement(par, title, Type)
-            if Type.name == "figure" and Type.link_process == "strip_title":
+            if Type.name == "figure" and Type.link_process == "strip_title" and title:
                 del img.attrib["title"]
 
 
