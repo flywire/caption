@@ -18,8 +18,10 @@ from xml.etree import ElementTree
 
 class CaptionTreeprocessor(Treeprocessor):
     """Base class for Caption processors."""
+
     name = ""
     content_tag = ""
+    caption_tag = "figcaption"
 
     def __init__(
         self,
@@ -31,7 +33,6 @@ class CaptionTreeprocessor(Treeprocessor):
         content_class=None,
         id_prefix=None,
         link_process=None,
-        caption_tag="figcaption",
         prefix_tag="span",
         id=None,
     ):
@@ -43,7 +44,6 @@ class CaptionTreeprocessor(Treeprocessor):
         self.content_class = content_class
         self.id_prefix = id_prefix
         self.link_process = link_process
-        self.caption_tag = caption_tag
         self.prefix_tag = prefix_tag
         self.id = id or "_{}-".format(self.name)
 
@@ -153,8 +153,9 @@ class FigureCaptionTreeProcessor(CaptionTreeprocessor):
 class TableCaptionTreeProcessor(CaptionTreeprocessor):
     name = "table"
     content_tag = "div class=table"
-    # caption_tag = "caption",
+    caption_tag = "caption"
     # link_process = self.link_process or "line_2_caption",
+
     def matches(self, par):
         return par.text and par.text.startswith("Table: ")
 
