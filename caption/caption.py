@@ -57,26 +57,26 @@ class CaptionTreeprocessor(Treeprocessor):
     def build_caption_element(self, par, title):
         """Format the caption."""
         caption = ElementTree.SubElement(par, self.caption_tag)
+        caption.tail = "\n"
+
         if self.caption_class:
             caption.set("class", self.caption_class)
-        if self.numbering:
-            caption_prefix_span = ElementTree.SubElement(caption, "span")
-            if title:
-                caption_prefix_span.text = "{}&nbsp;{}:".format(
-                    self.caption_prefix, self.number
-                )
-                caption_prefix_span.tail = " {}".format(title)
-            else:
-                caption_prefix_span.text = "{}&nbsp;{}".format(
-                    self.caption_prefix, self.number
-                )
-                caption_prefix_span.tail = ""
-            if self.caption_prefix_class:
-                caption_prefix_span.set("class", self.caption_prefix_class)
-        else:
+        if not self.numbering:
             caption.text = title
-
-        caption.tail = "\n"
+            return
+        caption_prefix_span = ElementTree.SubElement(caption, "span")
+        if title:
+            caption_prefix_span.text = "{}&nbsp;{}:".format(
+                self.caption_prefix, self.number
+            )
+            caption_prefix_span.tail = " {}".format(title)
+        else:
+            caption_prefix_span.text = "{}&nbsp;{}".format(
+                self.caption_prefix, self.number
+            )
+            caption_prefix_span.tail = ""
+        if self.caption_prefix_class:
+            caption_prefix_span.set("class", self.caption_prefix_class)
 
     def matches(self, par):
         """
