@@ -31,10 +31,7 @@ class CaptionTreeprocessor(Treeprocessor):
         caption_prefix_class=None,
         caption_class=None,
         content_class=None,
-        id_prefix=None,
         link_process=None,
-        prefix_tag="span",
-        id=None,
     ):
         self.caption_prefix = caption_prefix
         self.numbering = numbering
@@ -42,10 +39,7 @@ class CaptionTreeprocessor(Treeprocessor):
         self.caption_prefix_class = caption_prefix_class
         self.caption_class = caption_class
         self.content_class = content_class
-        self.id_prefix = id_prefix
         self.link_process = link_process
-        self.prefix_tag = prefix_tag
-        self.id = id or "_{}-".format(self.name)
 
     def build_content_element(self, par):
         """Format the content element containing the caption"""
@@ -66,7 +60,7 @@ class CaptionTreeprocessor(Treeprocessor):
         if self.caption_class:
             caption.set("class", self.caption_class)
         if self.numbering:
-            caption_prefix_span = ElementTree.SubElement(caption, self.prefix_tag)
+            caption_prefix_span = ElementTree.SubElement(caption, "span")
             if title:
                 caption_prefix_span.text = "{}&nbsp;{}:".format(
                     self.caption_prefix, self.number
