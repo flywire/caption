@@ -46,7 +46,7 @@ Python markdown extensions are incorporated into other applications.
 MkDocs users can add *caption* to their generator process by adding it to the
 `mkdocs.yml` `markdown_extensions` section:
 
-```python
+```yaml
 site_name: captionTest
 # theme:
 #    name: material
@@ -63,22 +63,33 @@ nav:
 Python will parse input to Markdown with *caption* as follows:
 
 ```python
-import caption
+import markdown
+from caption import CaptionExtension
 
 # ...
 
-outputString = markdown.markdown(inputString, extensions = [caption.captionExtension(numbering=false)])
+outputString = markdown.markdown(
+    input_string, extensions=[CaptionExtension(numbering=False)]
+)
 ```
 
 ### Options
 
 Currently supported options are listed below:
 
-* `captionPrefix` (default: `"Figure"`):
+* `figure_caption_prefix` (default: `"Figure"`):
 
     The text to show at the front of the caption. A final non-breaking space
-    is inserted between the content of `captionPrefix` and the actual figure
+    is inserted between the content of `table_caption_prefix` and the actual figure
     number.
+
+* `table_caption_prefix` (default: `"Table"`):
+
+    Same as `figure_caption_prefix`, but for tables.
+
+* `listing_caption_prefix` (default: `"Listing"`):
+  
+    Same as `figure_caption_prefix`, but for listings.
 
 * `numbering` (default: `True`):
 
