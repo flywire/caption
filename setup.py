@@ -1,6 +1,7 @@
 # caption - Manage markdown captions
 #
-# Copyright (c) 2020 flywire
+# Copyright (c) 2020-2023 flywire
+# Copyright (c) 2023 sanzoghenzo
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
