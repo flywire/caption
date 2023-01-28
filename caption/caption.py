@@ -113,38 +113,6 @@ class ListingCaptionTreeProcessor(CaptionTreeprocessor):
         return par.text[9:]
 
 
-class FigureCaptionTreeProcessor(CaptionTreeprocessor):
-    name = "figure"
-    content_tag = "figure"
-
-    def matches(self, par):
-        self._a = None
-        self._img = par.find("./img")
-        if self._img is None:
-            self._a = par.find("./a")
-            if self._a is None:
-                return False
-            self._img = self._a.find("./img")
-        return self._img is not None
-
-    def get_title(self, par):
-        return self._img.get("title")
-
-    def build_content_element(self, par):
-        super(FigureCaptionTreeProcessor, self).build_content_element(par)
-        if self._a is not None:
-            self._a.tail = "\n"
-            par.append(self._a)
-        else:
-            self._img.tail = self._img.tail or "" + "\n"
-            par.append(self._img)
-
-    def build_caption_element(self, par, title):
-        super(FigureCaptionTreeProcessor, self).build_caption_element(par, title)
-        if self.link_process == "strip_title" and title:
-            del self._img.attrib["title"]
-
-
 class TableCaptionTreeProcessor(CaptionTreeprocessor):
     name = "table"
     content_tag = "div class=table"
@@ -195,19 +163,6 @@ class CaptionExtension(Extension):
         content_class = self.getConfig("content_class")
         link_process = self.getConfig("link_process")
 
-        md.treeprocessors.register(
-            FigureCaptionTreeProcessor(
-                md,
-                caption_prefix=self.getConfig("figure_caption_prefix"),
-                numbering=numbering,
-                caption_prefix_class=caption_prefix_class,
-                caption_class=caption_class,
-                content_class=content_class,
-                link_process=link_process or "strip_title",
-            ),
-            "figurecaptiontreeprocessor",
-            8,
-        )
         md.treeprocessors.register(
             TableCaptionTreeProcessor(
                 md,

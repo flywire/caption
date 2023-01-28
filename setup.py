@@ -33,7 +33,12 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup",
     ],
     description="Manage markdown captions extension",
-    entry_points={"markdown.extensions": ["caption = caption:CaptionExtension"]},
+    entry_points={
+        "markdown.extensions": [
+            "caption = caption:CaptionExtension",
+            "image_captions = caption:ImageCaptionExtension",
+        ]
+    },
     install_requires=requirements,
     keywords="markdown image figure caption html a11y",
     license="GPLv3+",
