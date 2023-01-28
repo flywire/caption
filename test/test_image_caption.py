@@ -8,7 +8,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import markdown
 
-from caption import CaptionExtension
 from caption import ImageCaptionExtension
 
 
@@ -34,17 +33,6 @@ It contains multiple paragraphs as well as [links](https://example.com).
 Nothing should change here whilst using caption."""
     expected_string = markdown.markdown(in_string)
     out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
-    assert out_string == expected_string
-
-
-def test_listing():
-    in_string = """\
-Listing: Simple listing test"""
-    expected_string = """\
-<div class=listing id="_listing-1">
-<figcaption><span>Listing&nbsp;1:</span> Simple listing test</figcaption>
-</div class=listing>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
     assert out_string == expected_string
 
 
