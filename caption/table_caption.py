@@ -10,7 +10,7 @@ from xml.etree import ElementTree
 
 from markdown import Extension
 
-from caption.caption import CaptionTreeprocessor
+from .caption import CaptionTreeprocessor
 
 
 class TableCaptionTreeProcessor(CaptionTreeprocessor):

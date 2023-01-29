@@ -13,7 +13,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 """
 from markdown import Extension
 
-from caption.caption import CaptionTreeprocessor
+from .caption import CaptionTreeprocessor
 
 
 class ImageCaptionTreeProcessor(CaptionTreeprocessor):
