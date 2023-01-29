@@ -67,3 +67,36 @@ Table: Example with heading, two columns and a row
 </table>"""
     out_string = markdown.markdown(in_string, extensions=["tables", TableCaptionExtension()])
     assert out_string == expected_string
+
+
+def test_simple_table_bottom_caption():
+    in_string = """\
+Table: Example with heading, two columns and a row
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+"""
+    expected_string = """\
+<table id="_table-1">
+<caption style="caption-side:bottom"><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>Paragraph</td>
+<td>Text</td>
+</tr>
+</tbody>
+</table>"""
+    out_string = markdown.markdown(in_string, extensions=["tables", TableCaptionExtension(caption_top=False)])
+    assert out_string == expected_string

@@ -143,6 +143,7 @@ class CaptionExtension(Extension):
             "caption_class": ["", "CSS class to add to the caption element."],
             "content_class": ["", "CSS class to add to the content element."],
             "link_process": ["", "Some content types support linked processes."],
+            "caption_top": [False, "Put the caption at the top of the content."],
         }
         super(CaptionExtension, self).__init__(**kwargs)
 

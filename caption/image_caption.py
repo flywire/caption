@@ -89,6 +89,7 @@ class ImageCaptionExtension(Extension):
             "caption_class": ["", "CSS class to add to the caption element."],
             "content_class": ["", "CSS class to add to the content element."],
             "strip_title": [True, "Remove the title from the img tag."],
+            "caption_top": [False, "Put the caption at the top of the image."],
         }
         super(ImageCaptionExtension, self).__init__(**kwargs)
 

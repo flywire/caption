@@ -24,6 +24,11 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
     def get_title(self, par):
         return par.text[7:]
 
+    def add_caption_to_content(self, content, caption):
+        if not self.caption_top:
+            caption.set("style", "caption-side:bottom")
+        content.insert(0, caption)
+
     def run(self, root):
         """Find and format all captions."""
         root_iterator = iter(root)
@@ -58,6 +63,7 @@ class TableCaptionExtension(Extension):
             ],
             "caption_class": ["", "CSS class to add to the caption element."],
             "content_class": ["", "CSS class to add to the content element."],
+            "caption_top": [True, "Put the caption at the top of the table."],
         }
         super(TableCaptionExtension, self).__init__(**kwargs)
 
