@@ -1,6 +1,7 @@
 # caption - Manage markdown captions
 #
-# Copyright (c) 2020 flywire
+# Copyright (c) 2020-2023 flywire
+# Copyright (c) 2023 sanzoghenzo
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
@@ -32,7 +33,13 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup",
     ],
     description="Manage markdown captions extension",
-    entry_points={"markdown.extensions": ["caption = caption:CaptionExtension"]},
+    entry_points={
+        "markdown.extensions": [
+            "caption = caption:CaptionExtension",
+            "image_captions = caption:ImageCaptionExtension",
+            "table_captions = caption:TableCaptionExtension",
+        ]
+    },
     install_requires=requirements,
     keywords="markdown image figure caption html a11y",
     license="GPLv3+",

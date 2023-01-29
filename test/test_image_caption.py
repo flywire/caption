@@ -1,18 +1,19 @@
 # caption - Manage markdown captions
 #
-# Copyright (c) 2020 flywire
+# Copyright (c) 2020-2023 flywire
+# Copyright (c) 2023 sanzoghenzo
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 import markdown
 
-from caption import CaptionExtension
+from caption import ImageCaptionExtension
 
 
 def test_empty_input():
     in_string = ""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == in_string
 
 
@@ -31,18 +32,7 @@ It contains multiple paragraphs as well as [links](https://example.com).
 
 Nothing should change here whilst using caption."""
     expected_string = markdown.markdown(in_string)
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
-    assert out_string == expected_string
-
-
-def test_listing():
-    in_string = """\
-Listing: Simple listing test"""
-    expected_string = """\
-<div class=listing id="_listing-1">
-<figcaption><span>Listing&nbsp;1:</span> Simple listing test</figcaption>
-</div class=listing>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -54,7 +44,7 @@ def test_simple_image():
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -66,7 +56,7 @@ def test_simple_image_without_title():
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption><span>Figure&nbsp;1</span></figcaption>
 </figure>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -80,7 +70,7 @@ necessary to describe a picture for the blind.](/path/to/image.png "Title")"""
 necessary to describe a picture for the blind." src="/path/to/image.png" />
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -94,7 +84,7 @@ as sources.")"""
 <img alt="alt text" src="/path/to/image.png" />
 <figcaption><span>Figure&nbsp;1:</span> This is a very long title. It is used to give the readers a good figcaption. It may contain a description of the image as well as sources.</figcaption>
 </figure>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -109,9 +99,9 @@ def test_multiline_title_no_strip():
     out_string = markdown.markdown(
         in_string,
         extensions=[
-            CaptionExtension(
-                link_process="none",
-                figure_caption_prefix="",
+            ImageCaptionExtension(
+                strip_title=False,
+                caption_prefix="",
                 numbering=False,
             )
         ],
@@ -128,7 +118,7 @@ def test_strip_title_none():
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=[CaptionExtension(link_process="none")]
+        in_string, extensions=[ImageCaptionExtension(strip_title=False)]
     )
     assert out_string == expected_string
 
@@ -142,7 +132,7 @@ def test_content_class():
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=[CaptionExtension(content_class="testclass")]
+        in_string, extensions=[ImageCaptionExtension(content_class="testclass")]
     )
     assert out_string == expected_string
 
@@ -156,7 +146,7 @@ def test_caption_class():
 <figcaption class="testclass"><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=[CaptionExtension(caption_class="testclass")]
+        in_string, extensions=[ImageCaptionExtension(caption_class="testclass")]
     )
     assert out_string == expected_string
 
@@ -176,7 +166,7 @@ def test_numbering_false():
 <figcaption>Title 2</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=[CaptionExtension(numbering=False)]
+        in_string, extensions=[ImageCaptionExtension(numbering=False)]
     )
     assert out_string == expected_string
 
@@ -191,7 +181,7 @@ def test_caption_prefix_class():
 </figure>"""
     out_string = markdown.markdown(
         in_string,
-        extensions=[CaptionExtension(caption_prefix_class="testclass")],
+        extensions=[ImageCaptionExtension(caption_prefix_class="testclass")],
     )
     assert out_string == expected_string
 
@@ -205,7 +195,7 @@ def test_caption_prefix():
 <figcaption><span>Abbildung&nbsp;1:</span> Title</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=[CaptionExtension(figure_caption_prefix="Abbildung")]
+        in_string, extensions=[ImageCaptionExtension(caption_prefix="Abbildung")]
     )
     assert out_string == expected_string
 
@@ -219,7 +209,7 @@ def test_attribute_preservation():
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
     out_string = markdown.markdown(
-        in_string, extensions=["attr_list", CaptionExtension()]
+        in_string, extensions=["attr_list", ImageCaptionExtension()]
     )
     assert out_string == expected_string
 
@@ -232,7 +222,7 @@ def test_image_in_link():
 <a href="/path/to/link.html"><img alt="alt text" src="/path/to/image.png" /></a>
 <figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
 </figure>"""
-    out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
+    out_string = markdown.markdown(in_string, extensions=[ImageCaptionExtension()])
     assert out_string == expected_string
 
 
@@ -247,13 +237,13 @@ def test_combined_options():
     out_string = markdown.markdown(
         in_string,
         extensions=[
-            CaptionExtension(
-                figure_caption_prefix="Abbildung",
+            ImageCaptionExtension(
+                caption_prefix="Abbildung",
                 numbering=True,
                 content_class="testclass1",
                 caption_class="testclass2",
                 caption_prefix_class="testclass3",
-                link_process="strip_title",
+                strip_title=True,
             )
         ],
     )
