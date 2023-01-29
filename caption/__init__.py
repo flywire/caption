@@ -7,5 +7,6 @@
 
 from .image_caption import ImageCaptionExtension
 from .table_caption import TableCaptionExtension
+from .caption import CaptionExtension
 
-__all__ = ['ImageCaptionExtension', 'TableCaptionExtension']
+__all__ = ['ImageCaptionExtension', 'TableCaptionExtension', 'CaptionExtension']

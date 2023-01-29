@@ -11,6 +11,14 @@ many versions as possible. If you encounter any problems with *caption* please
 raise an [issue](https://github.com/flywire/caption/issues), or use the profile
 contact details.
 
+The functionality is split into three separate `python-maskdown` plugins:
+
+- `image_captions` for images
+- `table_captions` for tables
+- `caption` for general listings.
+
+## `image_captions`
+
 It uses the `title` attribute given to an image within Markdown to generate a
 `<figure>` environment with a `<figcaption>` containing the `title`'s text,
 e.g.:
@@ -28,8 +36,56 @@ becomes
 </figure>
 ```
 
-A new markdown syntax is added for tables and other content which requires 
-lines to start with "Table: " or "Listing: " respectively.
+## `table_captions`
+
+A paragraph starting with "Table" before a table is turned into a `caption`:
+
+```markdown
+Table: Example with heading, two columns and a row
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+```
+
+becomes
+
+```html
+<table id="_table-1">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>Paragraph</td>
+<td>Text</td>
+</tr>
+</tbody>
+</table>
+```
+
+## `caption`
+
+Generic listings captioning is supported, using the "Listing: " prefix:
+
+```markdown
+Listing: Example listing
+```
+
+becomes
+
+```html
+<caption><span>Listing&nbsp;1:</span> Example listing</caption>
+```
 
 ## How?
 
@@ -47,15 +103,15 @@ MkDocs users can add *caption* to their generator process by adding it to the
 `mkdocs.yml` `markdown_extensions` section:
 
 ```yaml
-site_name: captionTest
-# theme:
-#    name: material
-# extra_css: [extra.css]
+# ...
 markdown_extensions:
-    - caption:
-        numbering: false
-nav:
-    - Home: index.md
+  - image_captions:
+      numbering: true
+  - table_captions:
+      numbering: true
+      caption_top: false
+  - caption
+# ...
 ```
 
 ### Python
@@ -64,12 +120,16 @@ Python will parse input to Markdown with *caption* as follows:
 
 ```python
 import markdown
-from caption import CaptionExtension
+from caption import CaptionExtension, ImageCaptionExtension, TableCaptionExtension
 
 # ...
 
 outputString = markdown.markdown(
-    input_string, extensions=[CaptionExtension(numbering=False)]
+    input_string, extensions=[
+        CaptionExtension(numbering=False),
+        ImageCaptionExtension(),
+        TableCaptionExtension(),
+    ]
 )
 ```
 
@@ -77,34 +137,43 @@ outputString = markdown.markdown(
 
 Currently supported options are listed below:
 
-* `caption_prefix` (default: `"Figure"`):
+* `caption_prefix`:
 
     The text to show at the front of the caption. A final non-breaking space
     is inserted between the content of `caption_prefix` and the actual figure
     number.
 
-* `numbering` (default: `True`):
+* `numbering`:
 
     Adds a caption number like "Figure 1:" in front of the caption. It's
 	wrapped in a `<span />` for easier styling.
 
-* `content_class` (default: `""`):
+* `content_class`:
 
     The CSS class to add to the generated `<content />` element.
 
-* `caption_class` (default: `""`):
+* `caption_class`:
 
     The CSS class to add to the generated `<caption />` element.
 
-* `caption_prefix_class` (default: `""`):
+* `caption_prefix_class`:
 
     The CSS class to add to the `<span />` element generated for the caption prefix.
 
-* `link_process` (default: ""):
+* `caption_top`:
 
-    Content types may have a built-in link_process, for example figures have
-	"strip_title" which removes the original `title` attribute from the `<img />`
-	element. Its usage is discouraged and this format my be preferred.
+    Whether the caption should be on the top of the element.
+
+The default values for each type of content is synthesised in the following table:
+
+| Config                 | Image   | Table   | Other     |
+|------------------------|---------|---------|-----------|
+| `caption_prefix`       | "Image" | "Table" | "Listing" |
+| `numbering`            | False   | False   | False     |
+| `content_class`        | -       | -       | -         |
+| `caption_class`        | -       | -       | -         |
+| `caption_prefix_class` | -       | -       | -         |
+| `caption_top`          | False   | True    | True      |
 
 ## Why?
 
