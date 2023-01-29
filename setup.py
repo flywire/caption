@@ -37,6 +37,7 @@ setuptools.setup(
         "markdown.extensions": [
             "caption = caption:CaptionExtension",
             "image_captions = caption:ImageCaptionExtension",
+            "table_captions = caption:TableCaptionExtension",
         ]
     },
     install_requires=requirements,

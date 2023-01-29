@@ -29,14 +29,16 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
         caption_class=None,
         content_class=None,
         strip_title=True,
+        caption_top=False,
     ):
         super(ImageCaptionTreeProcessor, self).__init__(
-            md,
-            caption_prefix,
-            numbering,
-            caption_prefix_class,
-            caption_class,
-            content_class
+            md=md,
+            caption_prefix=caption_prefix,
+            numbering=numbering,
+            caption_prefix_class=caption_prefix_class,
+            caption_class=caption_class,
+            content_class=content_class,
+            caption_top=caption_top,
         )
         self.strip_title = strip_title
 
@@ -53,8 +55,8 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
     def get_title(self, par):
         return self._img.get("title")
 
-    def build_content_element(self, par):
-        super(ImageCaptionTreeProcessor, self).build_content_element(par)
+    def build_content_element(self, par, caption, replace=True):
+        super(ImageCaptionTreeProcessor, self).build_content_element(par, caption, replace=replace)
         if self._a is not None:
             self._a.tail = "\n"
             par.append(self._a)
@@ -62,10 +64,11 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
             self._img.tail = self._img.tail or "" + "\n"
             par.append(self._img)
 
-    def build_caption_element(self, par, title):
-        super(ImageCaptionTreeProcessor, self).build_caption_element(par, title)
+    def build_caption_element(self, title):
+        caption = super(ImageCaptionTreeProcessor, self).build_caption_element(title)
         if self.strip_title and title:
             del self._img.attrib["title"]
+        return caption
 
 
 class ImageCaptionExtension(Extension):
@@ -91,15 +94,7 @@ class ImageCaptionExtension(Extension):
 
     def extendMarkdown(self, md):
         md.treeprocessors.register(
-            ImageCaptionTreeProcessor(
-                md,
-                caption_prefix=self.getConfig("caption_prefix"),
-                numbering=self.getConfig("numbering"),
-                caption_prefix_class=self.getConfig("caption_prefix_class"),
-                caption_class=self.getConfig("caption_class"),
-                content_class=self.getConfig("content_class"),
-                strip_title=self.getConfig("strip_title"),
-            ),
+            ImageCaptionTreeProcessor(md, **self.getConfigs()),
             "figurecaptiontreeprocessor",
             8,
         )

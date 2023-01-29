@@ -33,6 +33,7 @@ class CaptionTreeprocessor(Treeprocessor):
         caption_class=None,
         content_class=None,
         link_process=None,
+        caption_top=True,
     ):
         self.caption_prefix = caption_prefix
         self.numbering = numbering
@@ -41,30 +42,39 @@ class CaptionTreeprocessor(Treeprocessor):
         self.caption_class = caption_class
         self.content_class = content_class
         self.link_process = link_process
+        self.caption_top = caption_top
 
-    def build_content_element(self, par):
+    def build_content_element(self, par, caption, replace=True):
         """Format the content element containing the caption"""
         attrib = par.attrib
-        par.clear()
+        if replace:
+            par.clear()
         par.tag = self.content_tag
         for k, v in attrib.items():
             par.set(k, v)
         if self.content_class:
             par.set("class", self.content_class)
         par.set("id", "_{}-{}".format(self.name, self.number))
-        par.text = "\n"
+        if replace:
+            par.text = "\n"
         par.tail = "\n"
 
-    def build_caption_element(self, par, title):
+    def add_caption_to_content(self, content, caption):
+        if self.caption_top:
+            content.insert(0, caption)
+        else:
+            content.append(caption)
+
+    def build_caption_element(self, title):
         """Format the caption."""
-        caption = ElementTree.SubElement(par, self.caption_tag)
+        caption = ElementTree.Element(self.caption_tag)
         caption.tail = "\n"
 
         if self.caption_class:
             caption.set("class", self.caption_class)
         if not self.numbering:
             caption.text = title
-            return
+            return caption
         caption_prefix_span = ElementTree.SubElement(caption, "span")
         if title:
             caption_prefix_span.text = "{}&nbsp;{}:".format(
@@ -78,6 +88,7 @@ class CaptionTreeprocessor(Treeprocessor):
             caption_prefix_span.tail = ""
         if self.caption_prefix_class:
             caption_prefix_span.set("class", self.caption_prefix_class)
+        return caption
 
     def matches(self, par):
         """
@@ -98,8 +109,9 @@ class CaptionTreeprocessor(Treeprocessor):
                 continue
             self.number += 1
             title = self.get_title(par)
-            self.build_content_element(par)
-            self.build_caption_element(par, title)
+            caption = self.build_caption_element(title)
+            self.build_content_element(par, caption)
+            self.add_caption_to_content(par, caption)
 
 
 class ListingCaptionTreeProcessor(CaptionTreeprocessor):
@@ -113,34 +125,13 @@ class ListingCaptionTreeProcessor(CaptionTreeprocessor):
         return par.text[9:]
 
 
-class TableCaptionTreeProcessor(CaptionTreeprocessor):
-    name = "table"
-    content_tag = "div class=table"
-    caption_tag = "caption"
-    # link_process = self.link_process or "line_2_caption",
-
-    def matches(self, par):
-        return par.text and par.text.startswith("Table: ")
-
-    def get_title(self, par):
-        return par.text[7:]
-
-
 class CaptionExtension(Extension):
     # caption Extension
 
     def __init__(self, **kwargs):
         # Setup configs
         self.config = {
-            "figure_caption_prefix": [
-                "Figure",
-                "The text to show in front of the image caption.",
-            ],
-            "table_caption_prefix": [
-                "Table",
-                "The text to show in front of the table caption.",
-            ],
-            "listing_caption_prefix": [
+            "caption_prefix": [
                 "Listing",
                 "The text to show in front of the listing caption.",
             ],
@@ -156,36 +147,8 @@ class CaptionExtension(Extension):
         super(CaptionExtension, self).__init__(**kwargs)
 
     def extendMarkdown(self, md):
-        # Add pieces to Markdown
-        numbering = self.getConfig("numbering")
-        caption_prefix_class = self.getConfig("caption_prefix_class")
-        caption_class = self.getConfig("caption_class")
-        content_class = self.getConfig("content_class")
-        link_process = self.getConfig("link_process")
-
         md.treeprocessors.register(
-            TableCaptionTreeProcessor(
-                md,
-                caption_prefix=self.getConfig("table_caption_prefix"),
-                numbering=numbering,
-                caption_prefix_class=caption_prefix_class,
-                caption_class=caption_class,
-                content_class=content_class,
-                link_process=link_process,
-            ),
-            "tablecaptiontreeprocessor",
-            8,
-        )
-        md.treeprocessors.register(
-            ListingCaptionTreeProcessor(
-                md,
-                caption_prefix=self.getConfig("listing_caption_prefix"),
-                numbering=numbering,
-                caption_prefix_class=caption_prefix_class,
-                caption_class=caption_class,
-                content_class=content_class,
-                link_process=link_process,
-            ),
+            ListingCaptionTreeProcessor(md, **self.getConfigs()),
             "listingcaptiontreeprocessor",
             8,
         )

@@ -8,7 +8,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import markdown
 
-from caption import CaptionExtension
+from caption.caption import CaptionExtension
 
 
 def test_listing():

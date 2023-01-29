@@ -77,19 +77,11 @@ outputString = markdown.markdown(
 
 Currently supported options are listed below:
 
-* `figure_caption_prefix` (default: `"Figure"`):
+* `caption_prefix` (default: `"Figure"`):
 
     The text to show at the front of the caption. A final non-breaking space
-    is inserted between the content of `table_caption_prefix` and the actual figure
+    is inserted between the content of `caption_prefix` and the actual figure
     number.
-
-* `table_caption_prefix` (default: `"Table"`):
-
-    Same as `figure_caption_prefix`, but for tables.
-
-* `listing_caption_prefix` (default: `"Listing"`):
-  
-    Same as `figure_caption_prefix`, but for listings.
 
 * `numbering` (default: `True`):
 
