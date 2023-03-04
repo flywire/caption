@@ -248,3 +248,15 @@ def test_combined_options():
         ],
     )
     assert out_string == expected_string
+
+
+def test_image_attr_list():
+    in_string = """\
+![alt text](/path/to/image.png "Title"){#testid .testal}"""
+    expected_string = """\
+<figure id="_figure-1">
+<img alt="alt text" class="testal" id="testid" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(in_string, extensions=["attr_list", ImageCaptionExtension()])
+    assert out_string == expected_string

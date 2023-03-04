@@ -20,3 +20,15 @@ Listing: Simple listing test"""
 </div>"""
     out_string = markdown.markdown(in_string, extensions=[CaptionExtension()])
     assert out_string == expected_string
+
+
+def test_listing_attr_list():
+    in_string = """\
+Listing: Simple listing test\n\
+{#testid .testclass}"""
+    expected_string = """\
+<div class="listing testclass" id="testid">
+<figcaption><span>Listing&nbsp;1:</span> Simple listing test</figcaption>
+</div>"""
+    out_string = markdown.markdown(in_string, extensions=["attr_list", CaptionExtension()])
+    assert out_string == expected_string
