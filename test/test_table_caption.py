@@ -64,6 +64,17 @@ TABLE_INNER_CONTENT = """<thead>
 </tbody>"""
 
 
+BASE_MD_TABLE_ATTR_LIST = """\
+Table: Example with heading, two columns and a row
+{#testid .testal}
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+"""
+
+
 def test_defaults():
     expected_string = """\
 <table id="_table-1">
@@ -131,4 +142,24 @@ def test_caption_prefix():
 {}
 </table>""".format(TABLE_INNER_CONTENT)
     out_string = markdown.markdown(BASE_MD_TABLE, extensions=["tables", TableCaptionExtension(caption_prefix="Tabula")])
+    assert out_string == expected_string
+
+
+def test_attr_list():
+    expected_string = """\
+<table class="testal" id="testid">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE_ATTR_LIST, extensions=["attr_list", "tables", TableCaptionExtension()])
+    assert out_string == expected_string
+
+
+def test_content_class_attr_list():
+    expected_string = """\
+<table class="testclass testal" id="testid">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE_ATTR_LIST, extensions=["attr_list", "tables", TableCaptionExtension(content_class="testclass")])
     assert out_string == expected_string
