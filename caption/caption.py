@@ -52,9 +52,16 @@ class CaptionTreeprocessor(Treeprocessor):
         par.tag = self.content_tag
         for k, v in attrib.items():
             par.set(k, v)
+
         if self.content_class:
-            par.set("class", self.content_class)
-        par.set("id", "_{}-{}".format(self.name, self.number))
+            if not "class" in attrib:
+                par.set("class", self.content_class)
+            else:
+                par.set("class", self.content_class + " " + attrib["class"])
+
+        if not "id" in attrib:
+            par.set("id", "_{}-{}".format(self.name, self.number))
+            
         if replace:
             par.text = "\n"
         par.tail = "\n"
@@ -116,7 +123,7 @@ class CaptionTreeprocessor(Treeprocessor):
 
 class ListingCaptionTreeProcessor(CaptionTreeprocessor):
     name = "listing"
-    content_tag = "div class=listing"
+    content_tag = "div"
 
     def matches(self, par):
         return par.text and par.text.startswith("Listing: ")
@@ -141,7 +148,7 @@ class CaptionExtension(Extension):
                 "CSS class to add to the caption prefix <span /> element.",
             ],
             "caption_class": ["", "CSS class to add to the caption element."],
-            "content_class": ["", "CSS class to add to the content element."],
+            "content_class": ["listing", "CSS class to add to the content element."],
             "link_process": ["", "Some content types support linked processes."],
             "caption_top": [False, "Put the caption at the top of the content."],
         }
