@@ -172,7 +172,7 @@ The default values for each type of content is synthesised in the following tabl
 |------------------------|---------|---------|-----------|
 | `caption_prefix`       | "Image" | "Table" | "Listing" |
 | `numbering`            | False   | False   | False     |
-| `content_class`        | -       | -       | -         |
+| `content_class`        | -       | -       | listing   |
 | `caption_class`        | -       | -       | -         |
 | `caption_prefix_class` | -       | -       | -         |
 | `caption_top`          | False   | True    | True      |
@@ -225,6 +225,67 @@ figcaption span:first-child {
 }
 ```
  There are further examples in the [wiki](https://github.com/flywire/caption/wiki).
+
+## Compatibility with attr_list extension
+
+*caption* supports preserving `attr_list` extension supplied `id` and `class` attributes by:
+
+* giving priority to markdown defined `id` attributes
+* concatenating `class` attributes.
+
+### `image_captions`
+
+This samples shows how to create a captioned image with `id` and `class` through markdown `attr_list` extension.
+
+```markdown
+![Alt text](/path/to/image.png "This is the title of the image."){ #title-image .test-class }
+```
+
+becomes
+
+```html
+<figure id="_figure-1">
+<img alt="Alt text" src="/path/to/image.png" id="title-image" class="test-class" />
+    ...
+```
+
+### `table_captions`
+
+This samples shows how to create a captioned table with `id` and `class` through markdown `attr_list` extension.
+
+```markdown
+Table: Example with heading, two columns and a row
+{#example-with-heading .test-class}
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+```
+
+becomes
+
+```html
+<table id="example-with-heading" class="test-class table">
+    ...
+```
+
+### `caption`
+
+This samples shows how to create a generic caption with `id` and `class` through markdown `attr_list` extension.
+
+
+```markdown
+Listing: Example listing
+{ #example-listing .test-class }
+```
+
+becomes
+
+```html
+<div class="listing test-class" id="example-listing">
+<figcaption><span>Listing&nbsp;1:</span> Example listing</figcaption>
+</div>
+```
 
 ## Customisable
 
