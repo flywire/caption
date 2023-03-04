@@ -54,14 +54,13 @@ class CaptionTreeprocessor(Treeprocessor):
             par.set(k, v)
 
         if self.content_class:
-            if not "class" in attrib:
-                par.set("class", self.content_class)
-            else:
+            if "class" in attrib:
                 par.set("class", self.content_class + " " + attrib["class"])
-
-        if not "id" in attrib:
+            else:
+                par.set("class", self.content_class)
+        if "id" not in attrib:
             par.set("id", "_{}-{}".format(self.name, self.number))
-            
+
         if replace:
             par.text = "\n"
         par.tail = "\n"
