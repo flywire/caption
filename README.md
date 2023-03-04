@@ -84,7 +84,9 @@ Listing: Example listing
 becomes
 
 ```html
-<caption><span>Listing&nbsp;1:</span> Example listing</caption>
+<div class="listing" id="_listing-1">
+<figcaption><span>Listing&nbsp;1:</span> Example listing</figcaption>
+</div>
 ```
 
 ## How?
