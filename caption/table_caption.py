@@ -42,6 +42,16 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
             title = self.get_title(child)
             root.remove(child)
             caption = self.build_caption_element(title)
+            
+            attrib = child.attrib
+            if "class" in attrib:
+                if not "class" in next_item.attrib:
+                    next_item.set("class", attrib["class"])
+                else:
+                    next_item.set("class", attrib["class"] + " " + next_item.attrib["class"])
+            if "id" in attrib:
+                next_item.set("id", attrib["id"])
+
             self.build_content_element(next_item, caption, replace=False)
             self.add_caption_to_content(next_item, caption)
 
