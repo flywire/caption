@@ -124,6 +124,9 @@ class ListingCaptionTreeProcessor(CaptionTreeprocessor):
     name = "listing"
     content_tag = "div"
 
+    def __init__(self, *args, **kwargs):
+        super(ListingCaptionTreeProcessor, self).__init__(*args, **kwargs)
+
     def matches(self, par):
         return par.text and par.text.startswith("Listing: ")
 

@@ -17,6 +17,9 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
     content_tag = "table"
     caption_tag = "caption"
 
+    def __init__(self, *args, **kwargs):
+        super(TableCaptionTreeProcessor, self).__init__(*args, **kwargs)
+
     def matches(self, par):
         return par.text and par.text.startswith("Table: ")
 

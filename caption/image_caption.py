@@ -20,27 +20,9 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
     name = "figure"
     content_tag = "figure"
 
-    def __init__(
-        self,
-        md=None,
-        caption_prefix="",
-        numbering=True,
-        caption_prefix_class=None,
-        caption_class=None,
-        content_class=None,
-        strip_title=True,
-        caption_top=False,
-    ):
-        super(ImageCaptionTreeProcessor, self).__init__(
-            md=md,
-            caption_prefix=caption_prefix,
-            numbering=numbering,
-            caption_prefix_class=caption_prefix_class,
-            caption_class=caption_class,
-            content_class=content_class,
-            caption_top=caption_top,
-        )
-        self.strip_title = strip_title
+    def __init__(self, *args, **kwargs):
+        self.strip_title = kwargs.pop("strip_title", True)
+        super(ImageCaptionTreeProcessor, self).__init__(*args, **kwargs)
 
     def matches(self, par):
         self._a = None
