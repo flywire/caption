@@ -20,12 +20,6 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
     def __init__(self, *args, **kwargs):
         super(TableCaptionTreeProcessor, self).__init__(*args, **kwargs)
 
-    def matches(self, par):
-        return par.text and par.text.startswith("Table: ")
-
-    def get_title(self, par):
-        return par.text[7:]
-
     def add_caption_to_content(self, content, caption):
         if not self.caption_top:
             caption.set("style", "caption-side:bottom")
@@ -41,7 +35,7 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
             if next_item.tag != self.content_tag:
                 continue
             self.number += 1
-            title = self.get_title(child)
+            title = self.get_title()
             root.remove(child)
             caption = self.build_caption_element(title)
 
@@ -69,7 +63,21 @@ class TableCaptionExtension(Extension):
                 "Table",
                 "The text to show in front of the table caption.",
             ],
+            "caption_match_re": [
+                r"^Table\s*?(?P<number>\d*)\:\s*(?P<title>.*)",
+                "The regexp used to match captions."
+                "The group(number) can match a optional number."
+                "The group(title) needs to match the title.",
+            ],
+            "caption_skip_empty": [
+                False,
+                "Dont create captions for empty titles."
+            ],
             "numbering": [True, "Add the caption number to the prefix."],
+            "numbering_preserve": [
+                False,
+                "Preserve matched numbers from caption match."
+            ],
             "caption_prefix_class": [
                 "",
                 "CSS class to add to the caption prefix <span /> element.",

@@ -24,18 +24,22 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
         self.strip_title = kwargs.pop("strip_title", True)
         super(ImageCaptionTreeProcessor, self).__init__(*args, **kwargs)
 
-    def matches(self, par):
+    def reset_match(self):
+        super(ImageCaptionTreeProcessor, self).reset_match()
         self._a = None
+        self._img = None
+
+    def matches(self, par):
+        self.reset_match()
         self._img = par.find("./img")
         if self._img is None:
             self._a = par.find("./a")
-            if self._a is None:
-                return False
-            self._img = self._a.find("./img")
-        return self._img is not None
+            if self._a is not None:
+                self._img = self._a.find("./img")
 
-    def get_title(self, par):
-        return self._img.get("title")
+        if self._img is not None:
+            return self.match_valid(self._img.get("title"))
+        return False
 
     def build_content_element(self, par, caption, replace=True):
         super(ImageCaptionTreeProcessor, self).build_content_element(par, caption, replace=replace)
@@ -62,6 +66,10 @@ class ImageCaptionExtension(Extension):
             "caption_prefix": [
                 "Figure",
                 "The text to show in front of the image caption.",
+            ],
+            "caption_skip_empty": [
+                False,
+                "Dont create captions for empty titles."
             ],
             "numbering": [True, "Add the caption number to the prefix."],
             "caption_prefix_class": [
