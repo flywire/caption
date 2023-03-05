@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2020-2023 flywire
 # Copyright (c) 2023 sanzoghenzo
+# Copyright (c) 2023 Hendrik Polczynski
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
@@ -244,6 +245,53 @@ def test_combined_options():
                 caption_class="testclass2",
                 caption_prefix_class="testclass3",
                 strip_title=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
+
+
+def test_image_attr_list():
+    in_string = """\
+![alt text](/path/to/image.png "Title"){#testid .testal}"""
+    expected_string = """\
+<figure id="_figure-1">
+<img alt="alt text" class="testal" id="testid" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(in_string, extensions=["attr_list", ImageCaptionExtension()])
+    assert out_string == expected_string
+
+
+def test_simple_skip_image_without_title():
+    in_string = """\
+![alt text](/path/to/image.png)"""
+    expected_string = """\
+<p><img alt="alt text" src="/path/to/image.png" /></p>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[
+            ImageCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
+
+
+def test_simple_image_dont_skip_filled_title():
+    in_string = """\
+![alt text](/path/to/image.png "Title")"""
+    expected_string = """\
+<figure id="_figure-1">
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[
+            ImageCaptionExtension(
+                caption_skip_empty=True,
             )
         ],
     )

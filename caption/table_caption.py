@@ -2,11 +2,11 @@
 #
 # Copyright (c) 2020-2023 flywire
 # Copyright (c) 2023 sanzoghenzo
+# Copyright (c) 2023 Hendrik Polczynski
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-from xml.etree import ElementTree
 
 from markdown import Extension
 
@@ -18,11 +18,8 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
     content_tag = "table"
     caption_tag = "caption"
 
-    def matches(self, par):
-        return par.text and par.text.startswith("Table: ")
-
-    def get_title(self, par):
-        return par.text[7:]
+    def __init__(self, *args, **kwargs):
+        super(TableCaptionTreeProcessor, self).__init__(*args, **kwargs)
 
     def add_caption_to_content(self, content, caption):
         if not self.caption_top:
@@ -39,9 +36,20 @@ class TableCaptionTreeProcessor(CaptionTreeprocessor):
             if next_item.tag != self.content_tag:
                 continue
             self.number += 1
-            title = self.get_title(child)
+            title = self.get_title()
             root.remove(child)
             caption = self.build_caption_element(title)
+
+            attrib = child.attrib
+            if "class" in attrib:
+                if "class" in next_item.attrib:
+                    next_item.set("class", attrib["class"] +
+                                  " " + next_item.attrib["class"])
+                else:
+                    next_item.set("class", attrib["class"])
+            if "id" in attrib:
+                next_item.set("id", attrib["id"])
+
             self.build_content_element(next_item, caption, replace=False)
             self.add_caption_to_content(next_item, caption)
 
@@ -56,7 +64,21 @@ class TableCaptionExtension(Extension):
                 "Table",
                 "The text to show in front of the table caption.",
             ],
+            "caption_match_re": [
+                r"^Table\s*?(?P<number>\d*)\:\s*(?P<title>.*)",
+                "The regexp used to match captions."
+                "The group(number) can match a optional number."
+                "The group(title) needs to match the title.",
+            ],
+            "caption_skip_empty": [
+                False,
+                "Dont create captions for empty titles."
+            ],
             "numbering": [True, "Add the caption number to the prefix."],
+            "numbering_preserve": [
+                False,
+                "Preserve matched numbers from caption match."
+            ],
             "caption_prefix_class": [
                 "",
                 "CSS class to add to the caption prefix <span /> element.",

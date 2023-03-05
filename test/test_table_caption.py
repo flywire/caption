@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2020-2023 flywire
 # Copyright (c) 2023 sanzoghenzo
+# Copyright (c) 2023 Hendrik Polczynski
 # forked from yafg - https://git.sr.ht/~ferruck/yafg
 # Copyright (c) 2019 Philipp Trommler
 #
@@ -62,6 +63,27 @@ TABLE_INNER_CONTENT = """<thead>
 <td>Text</td>
 </tr>
 </tbody>"""
+
+
+BASE_MD_TABLE_ATTR_LIST = """\
+Table: Example with heading, two columns and a row
+{#testid .testal}
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+"""
+
+
+BASE_MD_TABLE_NO_TITLE = """\
+Table: 
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+"""
 
 
 def test_defaults():
@@ -131,4 +153,60 @@ def test_caption_prefix():
 {}
 </table>""".format(TABLE_INNER_CONTENT)
     out_string = markdown.markdown(BASE_MD_TABLE, extensions=["tables", TableCaptionExtension(caption_prefix="Tabula")])
+    assert out_string == expected_string
+
+
+def test_attr_list():
+    expected_string = """\
+<table class="testal" id="testid">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE_ATTR_LIST, extensions=["attr_list", "tables", TableCaptionExtension()])
+    assert out_string == expected_string
+
+
+def test_content_class_attr_list():
+    expected_string = """\
+<table class="testclass testal" id="testid">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE_ATTR_LIST, extensions=["attr_list", "tables", TableCaptionExtension(content_class="testclass")])
+    assert out_string == expected_string
+
+
+def test_skip_without_title():
+    expected_string = """\
+<p>Table: </p>
+<table>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(
+        BASE_MD_TABLE_NO_TITLE,
+        extensions=[
+            "tables",
+            TableCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
+
+
+def test_defaults_dont_skip_filled_title():
+    expected_string = """\
+<table id="_table-1">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(
+        BASE_MD_TABLE,
+        extensions=[
+            "tables",
+            TableCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
     assert out_string == expected_string

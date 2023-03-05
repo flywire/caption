@@ -6,6 +6,7 @@ Applying style and auto-numbering to Python-Markdown content.
 https://github.com/flywire/caption
 Copyright (c) 2020-2023 flywire
 Copyright (c) 2023 sanzoghenzo
+Copyright (c) 2023 Hendrik Polczynski
 forked from yafg - https://git.sr.ht/~ferruck/yafg
 Copyright (c) 2019-2020 Philipp Trommler
 
@@ -15,6 +16,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from xml.etree import ElementTree
+import re
 
 
 class CaptionTreeprocessor(Treeprocessor):
@@ -28,7 +30,10 @@ class CaptionTreeprocessor(Treeprocessor):
         self,
         md=None,
         caption_prefix="",
+        caption_match_re="",
+        caption_skip_empty=False,
         numbering=True,
+        numbering_preserve=False,
         caption_prefix_class=None,
         caption_class=None,
         content_class=None,
@@ -36,13 +41,20 @@ class CaptionTreeprocessor(Treeprocessor):
         caption_top=True,
     ):
         self.caption_prefix = caption_prefix
+        self.caption_match_re = caption_match_re
+        self._match_re = re.compile(self.caption_match_re)
+        self.caption_skip_empty = caption_skip_empty
         self.numbering = numbering
+        self.numbering_preserve = numbering_preserve
         self.number = 0
         self.caption_prefix_class = caption_prefix_class
         self.caption_class = caption_class
         self.content_class = content_class
         self.link_process = link_process
         self.caption_top = caption_top
+
+        self._match_title = ""
+        self._match_number = None
 
     def build_content_element(self, par, caption, replace=True):
         """Format the content element containing the caption"""
@@ -52,9 +64,15 @@ class CaptionTreeprocessor(Treeprocessor):
         par.tag = self.content_tag
         for k, v in attrib.items():
             par.set(k, v)
+
         if self.content_class:
-            par.set("class", self.content_class)
-        par.set("id", "_{}-{}".format(self.name, self.number))
+            if "class" in attrib:
+                par.set("class", self.content_class + " " + attrib["class"])
+            else:
+                par.set("class", self.content_class)
+        if "id" not in attrib:
+            par.set("id", "_{}-{}".format(self.name, self.get_number()))
+
         if replace:
             par.text = "\n"
         par.tail = "\n"
@@ -78,12 +96,12 @@ class CaptionTreeprocessor(Treeprocessor):
         caption_prefix_span = ElementTree.SubElement(caption, "span")
         if title:
             caption_prefix_span.text = "{}&nbsp;{}:".format(
-                self.caption_prefix, self.number
+                self.caption_prefix, self.get_number()
             )
             caption_prefix_span.tail = " {}".format(title)
         else:
             caption_prefix_span.text = "{}&nbsp;{}".format(
-                self.caption_prefix, self.number
+                self.caption_prefix, self.get_number()
             )
             caption_prefix_span.tail = ""
         if self.caption_prefix_class:
@@ -93,14 +111,54 @@ class CaptionTreeprocessor(Treeprocessor):
     def matches(self, par):
         """
         Whether the element tree part matches the object to be captioned.
-
-        This will be overriden by the subclasses.
+        This can be overriden by the subclasses.
         """
-        raise NotImplementedError
+        self.reset_match()
+        if par.text:
+            match_caption = self._match_re.match(par.text)
+            if match_caption is not None:
+                return self.match_valid(match_caption.group("title"),
+                                        match_caption.group("number"))
+        return False
 
-    def get_title(self, par):
-        """Title of the element. This will be overriden by the subclasses."""
-        raise NotImplementedError
+    def reset_match(self):
+        """Resets the last found caption match data."""
+        self._match_title = ""
+        self._match_number = None
+
+    def match_valid(self, title="", number=None):
+        """
+        Remember the determined number, title.
+        Determines if the current match should not be skipped.
+        """
+        valid = True
+        if title is None:
+            valid = False
+        else:
+            title = title.strip()
+            valid &= len(title) > 0
+        valid |= not self.caption_skip_empty
+        if valid:
+            self._match_title = title or ""
+            try:
+                self._match_number = int(number)
+            except TypeError:
+                pass
+            except ValueError:
+                pass
+        else:
+            self.reset_match()
+        return valid
+
+    def get_title(self):
+        """Title of the matched figure. This can be overriden by the subclasses."""
+        return self._match_title
+
+    def get_number(self):
+        """Number of the matched figure. This can be overriden by the subclasses."""
+        if self.numbering_preserve and self._match_number is not None:
+            return self._match_number
+        return self.number
 
     def run(self, root):
         """Find and format all captions."""
@@ -108,7 +166,7 @@ class CaptionTreeprocessor(Treeprocessor):
             if not self.matches(par):
                 continue
             self.number += 1
-            title = self.get_title(par)
+            title = self.get_title()
             caption = self.build_caption_element(title)
             self.build_content_element(par, caption)
             self.add_caption_to_content(par, caption)
@@ -116,13 +174,10 @@ class CaptionTreeprocessor(Treeprocessor):
 
 class ListingCaptionTreeProcessor(CaptionTreeprocessor):
     name = "listing"
-    content_tag = "div class=listing"
+    content_tag = "div"
 
-    def matches(self, par):
-        return par.text and par.text.startswith("Listing: ")
-
-    def get_title(self, par):
-        return par.text[9:]
+    def __init__(self, *args, **kwargs):
+        super(ListingCaptionTreeProcessor, self).__init__(*args, **kwargs)
 
 
 class CaptionExtension(Extension):
@@ -135,13 +190,27 @@ class CaptionExtension(Extension):
                 "Listing",
                 "The text to show in front of the listing caption.",
             ],
+            "caption_match_re": [
+                r"^Listing\s*?(?P<number>\d*)\:\s*(?P<title>.*)",
+                "The regexp used to match captions."
+                "The group(number) can match a optional number."
+                "The group(title) needs to match the title.",
+            ],
+            "caption_skip_empty": [
+                False,
+                "Dont create captions for empty titles."
+            ],
             "numbering": [True, "Add the caption number to the prefix."],
+            "numbering_preserve": [
+                False,
+                "Preserve matched numbers from caption match."
+            ],
             "caption_prefix_class": [
                 "",
                 "CSS class to add to the caption prefix <span /> element.",
             ],
             "caption_class": ["", "CSS class to add to the caption element."],
-            "content_class": ["", "CSS class to add to the content element."],
+            "content_class": ["listing", "CSS class to add to the content element."],
             "link_process": ["", "Some content types support linked processes."],
             "caption_top": [False, "Put the caption at the top of the content."],
         }
