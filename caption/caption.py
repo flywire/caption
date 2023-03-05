@@ -6,6 +6,7 @@ Applying style and auto-numbering to Python-Markdown content.
 https://github.com/flywire/caption
 Copyright (c) 2020-2023 flywire
 Copyright (c) 2023 sanzoghenzo
+Copyright (c) 2023 Hendrik Polczynski
 forked from yafg - https://git.sr.ht/~ferruck/yafg
 Copyright (c) 2019-2020 Philipp Trommler
 
