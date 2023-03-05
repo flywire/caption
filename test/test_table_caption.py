@@ -75,6 +75,16 @@ Table: Example with heading, two columns and a row
 """
 
 
+BASE_MD_TABLE_NO_TITLE = """\
+Table: 
+
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+"""
+
+
 def test_defaults():
     expected_string = """\
 <table id="_table-1">
@@ -162,4 +172,40 @@ def test_content_class_attr_list():
 {}
 </table>""".format(TABLE_INNER_CONTENT)
     out_string = markdown.markdown(BASE_MD_TABLE_ATTR_LIST, extensions=["attr_list", "tables", TableCaptionExtension(content_class="testclass")])
+    assert out_string == expected_string
+
+
+def test_skip_without_title():
+    expected_string = """\
+<p>Table: </p>
+<table>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(
+        BASE_MD_TABLE_NO_TITLE,
+        extensions=[
+            "tables",
+            TableCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
+
+
+def test_defaults_dont_skip_filled_title():
+    expected_string = """\
+<table id="_table-1">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(
+        BASE_MD_TABLE,
+        extensions=[
+            "tables",
+            TableCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
     assert out_string == expected_string

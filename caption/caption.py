@@ -42,7 +42,7 @@ class CaptionTreeprocessor(Treeprocessor):
         self.caption_prefix = caption_prefix
         self.caption_match_re = caption_match_re
         self._match_re = re.compile(self.caption_match_re)
-        self.caption_skip_empty = caption_skip_empty,
+        self.caption_skip_empty = caption_skip_empty
         self.numbering = numbering
         self.numbering_preserve = numbering_preserve
         self.number = 0
@@ -130,9 +130,13 @@ class CaptionTreeprocessor(Treeprocessor):
         Remember the determined number, title.
         Determines if the current match should not be skipped.
         """
-        if title is not None:
+        valid = True
+        if title is None:
+            valid = False
+        else:
             title = title.strip()
-        valid = not self.caption_skip_empty or title
+            valid &= len(title) > 0
+        valid |= not self.caption_skip_empty
         if valid:
             self._match_title = title or ""
             try:
@@ -141,7 +145,9 @@ class CaptionTreeprocessor(Treeprocessor):
                 pass
             except ValueError:
                 pass
-        return True
+        else:
+            self.reset_match()
+        return valid
 
     def get_title(self):
         """Title of the matched figure. This can be overriden by the subclasses."""

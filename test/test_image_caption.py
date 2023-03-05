@@ -260,3 +260,38 @@ def test_image_attr_list():
 </figure>"""
     out_string = markdown.markdown(in_string, extensions=["attr_list", ImageCaptionExtension()])
     assert out_string == expected_string
+
+
+def test_simple_skip_image_without_title():
+    in_string = """\
+![alt text](/path/to/image.png)"""
+    expected_string = """\
+<p><img alt="alt text" src="/path/to/image.png" /></p>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[
+            ImageCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
+
+
+def test_simple_image_dont_skip_filled_title():
+    in_string = """\
+![alt text](/path/to/image.png "Title")"""
+    expected_string = """\
+<figure id="_figure-1">
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[
+            ImageCaptionExtension(
+                caption_skip_empty=True,
+            )
+        ],
+    )
+    assert out_string == expected_string
