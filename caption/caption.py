@@ -34,6 +34,7 @@ class CaptionTreeprocessor(Treeprocessor):
         content_class=None,
         link_process=None,
         caption_top=True,
+        caption_id=True,
     ):
         self.caption_prefix = caption_prefix
         self.numbering = numbering
@@ -43,6 +44,7 @@ class CaptionTreeprocessor(Treeprocessor):
         self.content_class = content_class
         self.link_process = link_process
         self.caption_top = caption_top
+        self.caption_id = caption_id
 
     def build_content_element(self, par, caption, replace=True):
         """Format the content element containing the caption"""
@@ -54,7 +56,8 @@ class CaptionTreeprocessor(Treeprocessor):
             par.set(k, v)
         if self.content_class:
             par.set("class", self.content_class)
-        par.set("id", "_{}-{}".format(self.name, self.number))
+        if self.caption_id:
+            par.set("id", "_{}-{}".format(self.name, self.number))
         if replace:
             par.text = "\n"
         par.tail = "\n"
@@ -144,6 +147,7 @@ class CaptionExtension(Extension):
             "content_class": ["", "CSS class to add to the content element."],
             "link_process": ["", "Some content types support linked processes."],
             "caption_top": [False, "Put the caption at the top of the content."],
+            "caption_id": [True, "Add an id to the element."],
         }
         super(CaptionExtension, self).__init__(**kwargs)
 

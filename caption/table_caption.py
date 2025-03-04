@@ -64,6 +64,7 @@ class TableCaptionExtension(Extension):
             "caption_class": ["", "CSS class to add to the caption element."],
             "content_class": ["", "CSS class to add to the content element."],
             "caption_top": [True, "Put the caption at the top of the table."],
+            "caption_id": [True, "Add an id to the element."],
         }
         super(TableCaptionExtension, self).__init__(**kwargs)
 
