@@ -185,7 +185,6 @@ def test_caption_prefix_class():
     )
     assert out_string == expected_string
 
-
 def test_caption_prefix():
     in_string = """\
 ![alt text](/path/to/image.png "Title")"""
@@ -246,5 +245,33 @@ def test_combined_options():
                 strip_title=True,
             )
         ],
+    )
+    assert out_string == expected_string
+
+def test_caption_id_false():
+    in_string = """\
+![alt text](/path/to/image.png "Title")"""
+    expected_string = """\
+<figure>
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[ImageCaptionExtension(caption_id=False)],
+    )
+    assert out_string == expected_string
+
+def test_caption_id_true():
+    in_string = """\
+![alt text](/path/to/image.png "Title")"""
+    expected_string = """\
+<figure id="_figure-1">
+<img alt="alt text" src="/path/to/image.png" />
+<figcaption><span>Figure&nbsp;1:</span> Title</figcaption>
+</figure>"""
+    out_string = markdown.markdown(
+        in_string,
+        extensions=[ImageCaptionExtension(caption_id=True)],
     )
     assert out_string == expected_string
