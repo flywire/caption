@@ -164,6 +164,10 @@ Currently supported options are listed below:
 
     Whether the caption should be on the top of the element.
 
+* `id_caption`:
+
+    Add an id to the element.
+
 The default values for each type of content is synthesised in the following table:
 
 | Config                 | Image   | Table   | Other     |
@@ -174,6 +178,7 @@ The default values for each type of content is synthesised in the following tabl
 | `caption_class`        | -       | -       | -         |
 | `caption_prefix_class` | -       | -       | -         |
 | `caption_top`          | False   | True    | True      |
+| `caption_id`           | True    | True    | True      |
 
 ## Why?
 
