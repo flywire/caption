@@ -11,6 +11,7 @@ Copyright (c) 2019-2020 Philipp Trommler
 
 SPDX-License-Identifier: GPL-3.0-or-later
 """
+
 from markdown import Extension
 
 from .caption import CaptionTreeprocessor
@@ -30,6 +31,7 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
         content_class=None,
         strip_title=True,
         caption_top=False,
+        caption_id=True,
     ):
         super(ImageCaptionTreeProcessor, self).__init__(
             md=md,
@@ -39,6 +41,7 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
             caption_class=caption_class,
             content_class=content_class,
             caption_top=caption_top,
+            caption_id=caption_id,
         )
         self.strip_title = strip_title
 
@@ -90,6 +93,7 @@ class ImageCaptionExtension(Extension):
             "content_class": ["", "CSS class to add to the content element."],
             "strip_title": [True, "Remove the title from the img tag."],
             "caption_top": [False, "Put the caption at the top of the image."],
+            "caption_id": [True, "Add an id to the element."],
         }
         super(ImageCaptionExtension, self).__init__(**kwargs)
 

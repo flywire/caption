@@ -132,3 +132,21 @@ def test_caption_prefix():
 </table>""".format(TABLE_INNER_CONTENT)
     out_string = markdown.markdown(BASE_MD_TABLE, extensions=["tables", TableCaptionExtension(caption_prefix="Tabula")])
     assert out_string == expected_string
+
+def test_caption_id_false():
+    expected_string = """\
+<table>
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE, extensions=["tables", TableCaptionExtension(caption_id=False)])
+    assert out_string == expected_string
+
+def test_caption_id_true():
+    expected_string = """\
+<table id="_table-1">
+<caption><span>Table&nbsp;1:</span> Example with heading, two columns and a row</caption>
+{}
+</table>""".format(TABLE_INNER_CONTENT)
+    out_string = markdown.markdown(BASE_MD_TABLE, extensions=["tables", TableCaptionExtension(caption_id=True)])
+    assert out_string == expected_string
