@@ -145,10 +145,30 @@ Currently supported options are listed below:
     is inserted between the content of `caption_prefix` and the actual figure
     number.
 
+* `caption_match_re`
+
+    The regexp used to match captions from the markdown text. It can be used
+    to match captions from multiple languages at once.
+    The `group(number)` can match a optional `number`, see `numbering_preserve`.
+    The `group(title)` needs to match the `title`.
+
+* `caption_skip_empty`
+
+    Whether empty captions should be skipped. This can be used for example to
+    skip images that are used as icons (captions which have an empty `title`).
+
 * `numbering`:
 
     Adds a caption number like "Figure 1:" in front of the caption. It's
 	wrapped in a `<span />` for easier styling.
+
+* `numbering_preserve`
+
+    This preserves a number captured to the `group(number)` using the
+    `caption_match_re` option. If no number is present it falls back to
+    the number generated from `numbering` option behaviour. It is not
+    recommended to use `preserved` manual and automatic numbering at
+    the same time in the markdown text, because of the conflict potential.
 
 * `content_class`:
 
@@ -171,7 +191,10 @@ The default values for each type of content is synthesised in the following tabl
 | Config                 | Image   | Table   | Other     |
 |------------------------|---------|---------|-----------|
 | `caption_prefix`       | "Image" | "Table" | "Listing" |
+| `caption_match_re`     | - (not supported) | `^Table\s*?(?P<number>\d*)\:\s*(?P<title>.*)` | `^Listing\s*?(?P<number>\d*)\:\s*(?P<title>.*)` |
+| `caption_skip_empty`   | False   | False   | False     |
 | `numbering`            | False   | False   | False     |
+| `numbering_preserve`   | False   | False   | False     |
 | `content_class`        | -       | -       | listing   |
 | `caption_class`        | -       | -       | -         |
 | `caption_prefix_class` | -       | -       | -         |

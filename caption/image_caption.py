@@ -6,6 +6,7 @@ Applying style and auto-numbering to Python-Markdown content.
 https://github.com/flywire/caption
 Copyright (c) 2020-2023 flywire
 Copyright (c) 2023 sanzoghenzo
+Copyright (c) 2023 Hendrik Polczynski
 forked from yafg - https://git.sr.ht/~ferruck/yafg
 Copyright (c) 2019-2020 Philipp Trommler
 
@@ -20,40 +21,26 @@ class ImageCaptionTreeProcessor(CaptionTreeprocessor):
     name = "figure"
     content_tag = "figure"
 
-    def __init__(
-        self,
-        md=None,
-        caption_prefix="",
-        numbering=True,
-        caption_prefix_class=None,
-        caption_class=None,
-        content_class=None,
-        strip_title=True,
-        caption_top=False,
-    ):
-        super(ImageCaptionTreeProcessor, self).__init__(
-            md=md,
-            caption_prefix=caption_prefix,
-            numbering=numbering,
-            caption_prefix_class=caption_prefix_class,
-            caption_class=caption_class,
-            content_class=content_class,
-            caption_top=caption_top,
-        )
-        self.strip_title = strip_title
+    def __init__(self, *args, **kwargs):
+        self.strip_title = kwargs.pop("strip_title", True)
+        super(ImageCaptionTreeProcessor, self).__init__(*args, **kwargs)
+
+    def reset_match(self):
+        super(ImageCaptionTreeProcessor, self).reset_match()
+        self._a = None
+        self._img = None
 
     def matches(self, par):
-        self._a = None
+        self.reset_match()
         self._img = par.find("./img")
         if self._img is None:
             self._a = par.find("./a")
-            if self._a is None:
-                return False
-            self._img = self._a.find("./img")
-        return self._img is not None
+            if self._a is not None:
+                self._img = self._a.find("./img")
 
-    def get_title(self, par):
-        return self._img.get("title")
+        if self._img is not None:
+            return self.match_valid(self._img.get("title"))
+        return False
 
     def build_content_element(self, par, caption, replace=True):
         super(ImageCaptionTreeProcessor, self).build_content_element(par, caption, replace=replace)
@@ -80,6 +67,10 @@ class ImageCaptionExtension(Extension):
             "caption_prefix": [
                 "Figure",
                 "The text to show in front of the image caption.",
+            ],
+            "caption_skip_empty": [
+                False,
+                "Dont create captions for empty titles."
             ],
             "numbering": [True, "Add the caption number to the prefix."],
             "caption_prefix_class": [
